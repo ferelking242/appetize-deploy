@@ -30,6 +30,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/api", (_req, res) => res.redirect("/api/dashboard/"));
 app.use("/api", router);
 
 app.use("/api/dashboard", express.static(path.resolve(process.cwd(), "public")));

@@ -1,0 +1,122 @@
+[
+  {
+    "name": "_gcl_au",
+    "value": "1.1.1805411122.1776181698",
+    "domain": ".appetize.io",
+    "path": "/",
+    "expires": 1783957698,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "_ga",
+    "value": "GA1.1.696466368.1776181698",
+    "domain": ".appetize.io",
+    "path": "/",
+    "expires": 1810741756,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "v2",
+    "value": "true",
+    "domain": "appetize.io",
+    "path": "/",
+    "expires": 1807717701,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "appetize_client_id",
+    "value": "cid_ba7492026bbf945b74bb",
+    "domain": "appetize.io",
+    "path": "/",
+    "expires": 1807717758,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "__hstc",
+    "value": "5265004.7edfe883b9f016337a274822b38416dd.1776181703644.1776181703644.1776181703644.1",
+    "domain": ".appetize.io",
+    "path": "/",
+    "expires": 1791733756,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "hubspotutk",
+    "value": "7edfe883b9f016337a274822b38416dd",
+    "domain": ".appetize.io",
+    "path": "/",
+    "expires": 1791733756,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "__hssrc",
+    "value": "1",
+    "domain": ".appetize.io",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "appetize-sidebar-drawer-open",
+    "value": "true",
+    "domain": "appetize.io",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "connect.sid",
+    "value": "s%3AapD24l51A7Ux1-yf4ebKbhBt1z0Pd8cM.EPyplUnASdBFCZTPoYyAjvqbqenAcotPznhGrspOeWc",
+    "domain": "appetize.io",
+    "path": "/",
+    "expires": 1778773755,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "_ga_2R31P5Q9K7",
+    "value": "GS2.1.s1776181698$o1$g1$t1776181755$j3$l0$h0",
+    "domain": ".appetize.io",
+    "path": "/",
+    "expires": 1810741756,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "__hssc",
+    "value": "5265004.2.1776181703645",
+    "domain": ".appetize.io",
+    "path": "/",
+    "expires": 1776183556,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ph_phc_kPJWkN7zdHKVrAkmpzgDa2KDcAbncvlOWvZVUZTUunO_posthog",
+    "value": "%7B%22distinct_id%22%3A%22019d8cad-e053-7084-9305-a6940035b60d%22%7D",
+    "domain": ".appetize.io",
+    "path": "/",
+    "expires": 1807717757,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  }
+]

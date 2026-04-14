@@ -1,0 +1,16 @@
+# Netscape HTTP Cookie File
+# https://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file! Do not edit.
+
+.appetize.io	TRUE	/	FALSE	1783957698	_gcl_au	1.1.1805411122.1776181698
+.appetize.io	TRUE	/	FALSE	1810741756	_ga	GA1.1.696466368.1776181698
+appetize.io	FALSE	/	FALSE	1807717701	v2	true
+appetize.io	FALSE	/	TRUE	1807717758	appetize_client_id	cid_ba7492026bbf945b74bb
+.appetize.io	TRUE	/	TRUE	1791733756	__hstc	5265004.7edfe883b9f016337a274822b38416dd.1776181703644.1776181703644.1776181703644.1
+.appetize.io	TRUE	/	TRUE	1791733756	hubspotutk	7edfe883b9f016337a274822b38416dd
+.appetize.io	TRUE	/	TRUE	0	__hssrc	1
+appetize.io	FALSE	/	FALSE	0	appetize-sidebar-drawer-open	true
+appetize.io	FALSE	/	TRUE	1778773755	connect.sid	s%3AapD24l51A7Ux1-yf4ebKbhBt1z0Pd8cM.EPyplUnASdBFCZTPoYyAjvqbqenAcotPznhGrspOeWc
+.appetize.io	TRUE	/	FALSE	1810741756	_ga_2R31P5Q9K7	GS2.1.s1776181698$o1$g1$t1776181755$j3$l0$h0
+.appetize.io	TRUE	/	TRUE	1776183556	__hssc	5265004.2.1776181703645
+.appetize.io	TRUE	/	TRUE	1807717757	ph_phc_kPJWkN7zdHKVrAkmpzgDa2KDcAbncvlOWvZVUZTUunO_posthog	%7B%22distinct_id%22%3A%22019d8cad-e053-7084-9305-a6940035b60d%22%2C%22%24sesid%22%3A%5B1776181756748%2C%22019d8cad-e0a0-79df-a12a-9c6597ca5e35%22%2C1776181698665%5D%2C%22%24initial_person_info%22%3A%7B%22r%22%3A%22https%3A%2F%2Fwww.google.com%2F%22%2C%22u%22%3A%22https%3A%2F%2Fappetize.io%2F%22%7D%7D
