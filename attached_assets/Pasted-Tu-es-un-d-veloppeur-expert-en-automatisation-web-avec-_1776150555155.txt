@@ -1,0 +1,77 @@
+Tu es un développeur expert en automatisation web avec Node.js et Playwright.
+
+Objectif :
+Créer un script COMPLET, robuste et maintenable qui automatise l’upload d’un APK sur https://appetize.io/apps en simulant un vrai utilisateur.
+
+Contraintes importantes :
+- Le site n’accepte QUE les fichiers locaux (input file)
+- L’upload doit se faire à partir d’un lien GitHub (donc téléchargement préalable obligatoire)
+- La session doit être persistante (cookies sauvegardés)
+- Le script doit être résistant aux changements du DOM
+
+Tâches à réaliser :
+
+1. Analyse dynamique du DOM
+- Inspecter automatiquement la page https://appetize.io/apps
+- Identifier :
+  - Le bouton “Upload App”
+  - L’input type="file"
+  - Le bouton de validation
+- Ne PAS hardcoder uniquement les sélecteurs
+- Prévoir fallback selectors (ex: texte, aria-label, role, etc.)
+- Logguer les éléments trouvés pour debug
+
+2. Gestion de session
+- Vérifier si un fichier cookies.json existe
+- Si oui :
+  - Charger les cookies et les injecter
+- Sinon :
+  - Laisser l’utilisateur se connecter manuellement
+  - Sauvegarder automatiquement les cookies après login
+
+3. Téléchargement APK depuis GitHub
+- Prendre en entrée une URL directe GitHub (release / artifact)
+- Télécharger le fichier en local (app.apk)
+- Vérifier que le fichier est valide (taille > 0)
+- Gérer erreurs réseau
+
+4. Upload automatisé
+- Naviguer vers https://appetize.io/apps
+- Cliquer sur “Upload App”
+- Attendre l’apparition de l’input file
+- Injecter le fichier APK téléchargé
+- Cliquer sur le bouton de validation
+- Attendre confirmation upload (nouvelle app visible ou message succès)
+
+5. Robustesse
+- Gestion des erreurs (timeout, élément introuvable)
+- Retry automatique si échec
+- Logs clairs (console.log structurés)
+- Timeout configurables
+
+6. Bonus (important)
+- Mode headless OFF par défaut pour debug visuel
+- Screenshot automatique en cas d’erreur
+- Structure modulaire (fonctions séparées)
+- Support async/await propre
+- Commentaires clairs
+
+7. Sortie attendue
+- Code Node.js complet avec Playwright
+- Fichier unique prêt à exécuter
+- Instructions :
+  - npm install
+  - playwright install
+  - node script.js
+
+Entrée utilisateur :
+- URL GitHub de l’APK
+
+Objectif final :
+Un script qui permet :
+- de rester connecté à vie
+- d’uploader automatiquement n’importe quel APK depuis GitHub sur Appetize
+- sans intervention manuelle après setup
+
+Important :
+Le script doit être fiable, intelligent sur la détection DOM, et prêt pour usage réel (pas un exemple basique).

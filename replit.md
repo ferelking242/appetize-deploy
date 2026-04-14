@@ -25,3 +25,21 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `pnpm --filter @workspace/api-server run dev` — run API server locally
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+
+## Standalone Tools
+
+### `appetize-uploader/`
+
+Node.js + Playwright script that automates APK uploads to Appetize.io from a GitHub URL.
+
+```bash
+cd appetize-uploader
+npm install
+npx playwright install chromium
+node script.js <github-apk-url>
+```
+
+- Saves session cookies after first manual login — no login required on subsequent runs
+- Downloads the APK from GitHub before uploading
+- Auto-retries on failure, takes screenshots on error
+- All config (timeouts, retries, headless mode) is in the `CONFIG` block at the top of `script.js`

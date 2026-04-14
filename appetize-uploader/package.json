@@ -1,0 +1,16 @@
+{
+  "name": "appetize-uploader",
+  "version": "1.0.0",
+  "description": "Automated APK uploader to Appetize.io via Playwright",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "start": "node script.js",
+    "install-browsers": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.49.0",
+    "playwright": "^1.49.0",
+    "axios": "^1.7.0"
+  }
+}
