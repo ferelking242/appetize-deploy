@@ -3,180 +3,106 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Appetize Uploader — Dashboard</title>
+  <title>Appetize Uploader</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #0f1117;
-      color: #e2e8f0;
-      min-height: 100vh;
-      padding: 24px;
-    }
-    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; color: #fff; }
-    .subtitle { color: #64748b; font-size: 0.85rem; margin-bottom: 24px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
-    .card {
-      background: #1e2330;
-      border: 1px solid #2d3748;
-      border-radius: 10px;
-      padding: 20px;
-    }
-    .card h2 { font-size: 0.95rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px; }
-    label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px; margin-top: 10px; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+    h1 { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .subtitle { color: #64748b; font-size: 0.82rem; margin-bottom: 20px; }
+    .status-bar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #1e2330; border: 1px solid #2d3748; border-radius: 8px; margin-bottom: 16px; font-size: 0.83rem; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: #10b981; box-shadow: 0 0 6px #10b981; animation: pulse 1.5s infinite; }
+    .dot-gray { background: #6b7280; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+    .badge-green { background: #064e3b; color: #6ee7b7; }
+    .badge-gray { background: #1f2937; color: #9ca3af; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: #1e2330; border: 1px solid #2d3748; border-radius: 10px; padding: 18px; }
+    .card h2 { font-size: 0.82rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    label { display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; margin-top: 10px; }
+    label:first-of-type { margin-top: 0; }
     input, textarea, select {
-      width: 100%;
-      background: #0f1117;
-      border: 1px solid #374151;
-      border-radius: 6px;
-      color: #e2e8f0;
-      padding: 8px 10px;
-      font-size: 0.85rem;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 0.15s;
+      width: 100%; background: #0f1117; border: 1px solid #374151; border-radius: 6px;
+      color: #e2e8f0; padding: 8px 10px; font-size: 0.83rem; font-family: inherit; outline: none; transition: border-color 0.15s;
     }
     input:focus, textarea:focus, select:focus { border-color: #6366f1; }
-    textarea { resize: vertical; font-family: 'Courier New', monospace; font-size: 0.75rem; }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: none;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
-    }
+    textarea { resize: vertical; font-family: monospace; font-size: 0.72rem; }
+    .btn { display: inline-flex; align-items: center; gap: 5px; padding: 8px 14px; border-radius: 6px; border: none; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: opacity .15s, transform .1s; }
     .btn:active { transform: scale(0.97); }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
     .btn-primary { background: #6366f1; color: #fff; }
-    .btn-danger { background: #ef4444; color: #fff; }
-    .btn-green { background: #10b981; color: #fff; }
-    .btn-gray { background: #374151; color: #e2e8f0; }
-    .btn-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-    .status-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      background: #1e2330;
-      border: 1px solid #2d3748;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 0.83rem;
-    }
-    .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .dot-green { background: #10b981; box-shadow: 0 0 6px #10b981; }
-    .dot-red { background: #ef4444; }
-    .dot-gray { background: #6b7280; }
-    .console-wrap {
-      background: #0a0c12;
-      border: 1px solid #1e2330;
-      border-radius: 10px;
-      padding: 0;
-      overflow: hidden;
-    }
-    .console-header {
-      background: #1e2330;
-      padding: 10px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #2d3748;
-    }
-    .console-header span { font-size: 0.85rem; font-weight: 600; color: #94a3b8; }
-    #console {
-      font-family: 'Courier New', Consolas, monospace;
-      font-size: 0.75rem;
-      line-height: 1.5;
-      padding: 14px 16px;
-      height: 420px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
+    .btn-danger  { background: #ef4444; color: #fff; }
+    .btn-green   { background: #10b981; color: #fff; }
+    .btn-gray    { background: #374151; color: #e2e8f0; }
+    .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .msg { font-size: 0.78rem; padding: 5px 10px; border-radius: 5px; margin-top: 8px; display:none; }
+    .msg.show { display: block; }
+    .msg-ok  { background: #064e3b; color: #6ee7b7; }
+    .msg-err { background: #7f1d1d; color: #fca5a5; }
+    .artifact-select { margin-top: 10px; display:none; }
+    .artifact-select.show { display: block; }
+    .console-wrap { background: #0a0c12; border: 1px solid #1e2330; border-radius: 10px; overflow: hidden; }
+    .console-header { background: #1e2330; padding: 9px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d3748; }
+    .console-header span { font-size: 0.83rem; font-weight: 600; color: #94a3b8; }
+    #console { font-family: 'Courier New', monospace; font-size: 0.72rem; line-height: 1.5; padding: 12px 14px; height: 380px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
     .log-info { color: #93c5fd; }
-    .log-ok { color: #6ee7b7; }
+    .log-ok   { color: #6ee7b7; }
     .log-warn { color: #fbbf24; }
     .log-error { color: #f87171; }
     .log-step { color: #a78bfa; font-weight: bold; }
     .log-dashboard { color: #e879f9; }
     .log-default { color: #cbd5e1; }
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-    .badge-green { background: #064e3b; color: #6ee7b7; }
-    .badge-gray { background: #1f2937; color: #9ca3af; }
-    .msg { font-size: 0.8rem; padding: 6px 10px; border-radius: 6px; margin-top: 8px; }
-    .msg-ok { background: #064e3b; color: #6ee7b7; }
-    .msg-err { background: #7f1d1d; color: #fca5a5; }
-    #command-fields { margin-top: 10px; }
+    .spinner { display:inline-block; width:12px; height:12px; border:2px solid #6366f1; border-top-color:transparent; border-radius:50%; animation: spin .6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <h1>🤖 Appetize Uploader</h1>
-  <p class="subtitle">Tableau de bord — gestion des sessions et uploads APK</p>
+  <p class="subtitle">Tableau de bord — sessions &amp; uploads APK</p>
 
   <div class="status-bar">
     <div class="dot dot-gray" id="proc-dot"></div>
     <span id="proc-status">Chargement…</span>
     <span style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-      <span>Cookies :</span>
-      <span class="badge badge-gray" id="cookie-badge">—</span>
+      Cookies : <span class="badge badge-gray" id="cookie-badge">—</span>
     </span>
   </div>
 
   <div class="grid">
     <!-- COOKIES -->
     <div class="card">
-      <h2>🍪 Session Appetize (Cookies)</h2>
-      <p style="font-size:0.8rem;color:#64748b;margin-bottom:10px;">
-        Colle le contenu JSON de tes cookies Appetize (format Playwright ou exportés depuis DevTools).
+      <h2>🍪 Session Appetize</h2>
+      <p style="font-size:0.78rem;color:#64748b;margin-bottom:10px;">
+        Colle le JSON exporté depuis l'extension <strong>Cookie-Editor</strong> (Export → JSON for Playwright).
       </p>
-      <label for="cookies-input">cookies.json — contenu JSON</label>
-      <textarea id="cookies-input" rows="8" placeholder='[{"name":"session","value":"abc...","domain":"appetize.io",...}]'></textarea>
-      <div id="cookie-msg"></div>
+      <label>Contenu cookies.json</label>
+      <textarea id="cookies-input" rows="7" placeholder='[{"name":"connect.sid","value":"...","domain":"appetize.io",...}]'></textarea>
+      <div id="cookie-msg" class="msg"></div>
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveCookies()">💾 Sauvegarder les cookies</button>
+        <button class="btn btn-primary" onclick="saveCookies()">💾 Sauvegarder</button>
         <button class="btn btn-danger" onclick="deleteCookies()">🗑 Supprimer</button>
       </div>
     </div>
 
-    <!-- RUN -->
+    <!-- UPLOAD -->
     <div class="card">
-      <h2>🚀 Lancer le script</h2>
-      <label for="cmd-select">Commande</label>
-      <select id="cmd-select" onchange="updateCommandFields()">
-        <option value="upload">upload — envoyer un APK</option>
-        <option value="list">list — lister les apps</option>
-        <option value="delete">delete — supprimer une app</option>
-      </select>
+      <h2>🚀 Upload APK</h2>
+      <label>URL du run GitHub Actions</label>
+      <input type="url" id="run-url" placeholder="https://github.com/owner/repo/actions/runs/12345678"
+             oninput="onUrlChange()" />
 
-      <div id="command-fields">
-        <label for="repo-input">Repo GitHub (owner/repo)</label>
-        <input type="text" id="repo-input" placeholder="ferelking242/watchtower" />
+      <div id="fetch-status" style="font-size:0.75rem;color:#64748b;margin-top:6px;min-height:18px;"></div>
 
-        <label for="runid-input">Run ID (GitHub Actions)</label>
-        <input type="text" id="runid-input" placeholder="24347257733" />
-
-        <label for="artifact-input">Nom de l'artefact</label>
-        <input type="text" id="artifact-input" placeholder="app-arm64-profile" />
+      <div class="artifact-select" id="artifact-wrap">
+        <label>Artefact à uploader</label>
+        <select id="artifact-select"></select>
       </div>
 
-      <div id="run-msg"></div>
+      <div id="run-msg" class="msg"></div>
       <div class="btn-row">
-        <button class="btn btn-green" id="run-btn" onclick="runScript()">▶ Lancer</button>
+        <button class="btn btn-green" id="run-btn" onclick="runUpload()" disabled>▶ Lancer l'upload</button>
         <button class="btn btn-danger" id="stop-btn" onclick="stopScript()" disabled>⏹ Arrêter</button>
       </div>
     </div>
@@ -186,42 +112,17 @@
   <div class="console-wrap">
     <div class="console-header">
       <span>📟 Logs en temps réel</span>
-      <button class="btn btn-gray" style="padding:4px 12px;font-size:0.75rem;" onclick="clearConsole()">Effacer</button>
+      <button class="btn btn-gray" style="padding:4px 10px;font-size:0.72rem;" onclick="clearConsole()">Effacer</button>
     </div>
     <div id="console"></div>
   </div>
 
   <script>
     const BASE = '';
+    let parsedRun = null;
+    let fetchTimer = null;
 
-    function updateCommandFields() {
-      const cmd = document.getElementById('cmd-select').value;
-      const fields = document.getElementById('command-fields');
-      fields.style.display = cmd === 'upload' ? 'block' : 'none';
-    }
-    updateCommandFields();
-
-    function appendLog(raw) {
-      const console_ = document.getElementById('console');
-      const div = document.createElement('div');
-      let cls = 'log-default';
-      if (raw.includes('[INFO]'))      cls = 'log-info';
-      else if (raw.includes('[OK]'))   cls = 'log-ok';
-      else if (raw.includes('[WARN]')) cls = 'log-warn';
-      else if (raw.includes('[ERROR]') || raw.includes('[ERR]')) cls = 'log-error';
-      else if (raw.includes('[STEP]')) cls = 'log-step';
-      else if (raw.includes('[DASHBOARD]')) cls = 'log-dashboard';
-      else if (raw.includes('═'))      cls = 'log-step';
-      div.className = cls;
-      div.textContent = raw;
-      console_.appendChild(div);
-      console_.scrollTop = console_.scrollHeight;
-    }
-
-    function clearConsole() {
-      document.getElementById('console').innerHTML = '';
-    }
-
+    // ── SSE ──
     let sse = null;
     function connectSSE() {
       if (sse) sse.close();
@@ -230,16 +131,34 @@
         try { appendLog(JSON.parse(e.data)); } catch { appendLog(e.data); }
       };
       sse.onerror = () => {
-        appendLog('[DASHBOARD] Connexion SSE perdue — reconnexion dans 3s…');
         setTimeout(connectSSE, 3000);
       };
     }
     connectSSE();
 
+    function appendLog(raw) {
+      const el = document.getElementById('console');
+      const div = document.createElement('div');
+      let cls = 'log-default';
+      if (raw.includes('[INFO]'))       cls = 'log-info';
+      else if (raw.includes('[OK]'))    cls = 'log-ok';
+      else if (raw.includes('[WARN]'))  cls = 'log-warn';
+      else if (raw.includes('[ERROR]') || raw.includes('[ERR]')) cls = 'log-error';
+      else if (raw.includes('[STEP]'))  cls = 'log-step';
+      else if (raw.includes('[DASHBOARD]')) cls = 'log-dashboard';
+      else if (raw.includes('═'))       cls = 'log-step';
+      div.className = cls;
+      div.textContent = raw;
+      el.appendChild(div);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function clearConsole() { document.getElementById('console').innerHTML = ''; }
+
+    // ── Status polling ──
     async function fetchStatus() {
       try {
-        const r = await fetch(`${BASE}/api/appetize/status`);
-        const d = await r.json();
+        const d = await (await fetch(`${BASE}/api/appetize/status`)).json();
         const dot = document.getElementById('proc-dot');
         const label = document.getElementById('proc-status');
         const badge = document.getElementById('cookie-badge');
@@ -254,7 +173,7 @@
         } else {
           dot.className = 'dot dot-gray';
           label.textContent = 'Aucun processus actif';
-          runBtn.disabled = false;
+          runBtn.disabled = !parsedRun;
           stopBtn.disabled = true;
         }
 
@@ -265,62 +184,98 @@
     fetchStatus();
     setInterval(fetchStatus, 3000);
 
+    // ── URL parsing & artifact fetch ──
+    function onUrlChange() {
+      clearTimeout(fetchTimer);
+      fetchTimer = setTimeout(fetchArtifacts, 600);
+    }
+
+    async function fetchArtifacts() {
+      const url = document.getElementById('run-url').value.trim();
+      const statusEl = document.getElementById('fetch-status');
+      const wrap = document.getElementById('artifact-wrap');
+      const sel = document.getElementById('artifact-select');
+      const runBtn = document.getElementById('run-btn');
+      parsedRun = null;
+      runBtn.disabled = true;
+      wrap.classList.remove('show');
+
+      if (!url.includes('github.com')) return;
+
+      statusEl.innerHTML = '<span class="spinner"></span> Récupération des artefacts…';
+
+      try {
+        const r = await fetch(`${BASE}/api/appetize/artifacts?url=${encodeURIComponent(url)}`);
+        const d = await r.json();
+        if (!r.ok) { statusEl.textContent = '⚠ ' + d.error; return; }
+
+        parsedRun = d;
+        if (d.artifacts.length === 0) {
+          statusEl.textContent = '⚠ Aucun artefact dans ce run.';
+          return;
+        }
+
+        sel.innerHTML = '';
+        for (const a of d.artifacts) {
+          const opt = document.createElement('option');
+          opt.value = a.name;
+          opt.textContent = `${a.name} (${a.sizeMb} MB)`;
+          sel.appendChild(opt);
+        }
+
+        wrap.classList.add('show');
+        runBtn.disabled = false;
+        statusEl.textContent = `✓ ${d.artifacts.length} artefact(s) trouvé(s) — ${d.repo} #${d.runId}`;
+        statusEl.style.color = '#6ee7b7';
+      } catch (e) {
+        statusEl.textContent = '⚠ Erreur: ' + e.message;
+        statusEl.style.color = '#f87171';
+      }
+    }
+
+    // ── Actions ──
     function showMsg(id, text, ok) {
       const el = document.getElementById(id);
-      el.className = 'msg ' + (ok ? 'msg-ok' : 'msg-err');
+      el.className = 'msg show ' + (ok ? 'msg-ok' : 'msg-err');
       el.textContent = text;
-      setTimeout(() => { el.textContent = ''; el.className = ''; }, 4000);
+      setTimeout(() => { el.className = 'msg'; }, 4000);
     }
 
     async function saveCookies() {
       const raw = document.getElementById('cookies-input').value.trim();
       if (!raw) { showMsg('cookie-msg', 'Colle tes cookies JSON d\'abord', false); return; }
-      try {
-        JSON.parse(raw);
-      } catch {
-        showMsg('cookie-msg', 'JSON invalide — vérifie le format', false);
-        return;
-      }
+      try { JSON.parse(raw); } catch { showMsg('cookie-msg', 'JSON invalide — vérifie le format', false); return; }
       const r = await fetch(`${BASE}/api/appetize/cookies`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cookies: raw }),
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cookies: raw }),
       });
       const d = await r.json();
-      if (r.ok) { showMsg('cookie-msg', '✓ Cookies sauvegardés', true); fetchStatus(); }
-      else showMsg('cookie-msg', d.error || 'Erreur', false);
+      r.ok ? showMsg('cookie-msg', '✓ Cookies sauvegardés', true) : showMsg('cookie-msg', d.error || 'Erreur', false);
+      fetchStatus();
     }
 
     async function deleteCookies() {
       const r = await fetch(`${BASE}/api/appetize/cookies`, { method: 'DELETE' });
       const d = await r.json();
-      if (r.ok) { showMsg('cookie-msg', 'Cookies supprimés', true); fetchStatus(); }
-      else showMsg('cookie-msg', d.error || 'Erreur', false);
+      r.ok ? showMsg('cookie-msg', 'Cookies supprimés', true) : showMsg('cookie-msg', d.error || 'Erreur', false);
+      fetchStatus();
     }
 
-    async function runScript() {
-      const command = document.getElementById('cmd-select').value;
-      const body = { command };
-      if (command === 'upload') {
-        body.repo = document.getElementById('repo-input').value.trim();
-        body.runId = document.getElementById('runid-input').value.trim();
-        body.artifactName = document.getElementById('artifact-input').value.trim();
-      }
+    async function runUpload() {
+      if (!parsedRun) return;
+      const artifactName = document.getElementById('artifact-select').value;
       const r = await fetch(`${BASE}/api/appetize/run`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: 'upload', repo: parsedRun.repo, runId: parsedRun.runId, artifactName }),
       });
       const d = await r.json();
-      if (r.ok) { showMsg('run-msg', '✓ Script lancé (PID ' + d.pid + ')', true); fetchStatus(); }
-      else showMsg('run-msg', d.error || 'Erreur', false);
+      r.ok ? showMsg('run-msg', '✓ Upload lancé — PID ' + d.pid, true) : showMsg('run-msg', d.error || 'Erreur', false);
+      fetchStatus();
     }
 
     async function stopScript() {
       const r = await fetch(`${BASE}/api/appetize/stop`, { method: 'POST' });
       const d = await r.json();
-      if (r.ok) showMsg('run-msg', 'Signal d\'arrêt envoyé', true);
-      else showMsg('run-msg', d.error || 'Erreur', false);
+      r.ok ? showMsg('run-msg', 'Arrêt envoyé', true) : showMsg('run-msg', d.error, false);
     }
   </script>
 </body>

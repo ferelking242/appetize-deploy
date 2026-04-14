@@ -36,7 +36,7 @@ const CONFIG = {
   cookiesFile:   path.resolve(__dirname, "cookies.json"),
   apkOutputPath: path.resolve(__dirname, "app.apk"),
   screenshotsDir: path.resolve(__dirname, "screenshots"),
-  headless: false,
+  headless: true,
   timeouts: {
     navigation:         60_000,
     elementVisible:     30_000,
