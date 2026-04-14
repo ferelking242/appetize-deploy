@@ -1,9 +1,8 @@
-# Appetize.io APK Auto-Uploader
+# Appetize.io APK Manager
 
-Automates uploading any APK from a GitHub URL to your Appetize.io account.  
-Stays logged in permanently via saved session cookies.
+Upload et supprime des APKs sur Appetize.io depuis des artefacts GitHub Actions.
 
-## Setup (one-time)
+## Setup (une seule fois)
 
 ```bash
 cd appetize-uploader
@@ -11,53 +10,75 @@ npm install
 npx playwright install chromium
 ```
 
-## Run
+## Commandes
+
+### Upload un APK depuis GitHub Actions
 
 ```bash
-node script.js <github-apk-url>
+GITHUB_PAT=ghp_xxx node script.js upload <owner/repo> <run_id> <artifact_name>
 ```
 
-### Example
+Exemple (ton artefact):
+```bash
+GITHUB_PAT=ghp_xxx node script.js upload ferelking242/watchtower 24347257733 app-arm64-profile
+```
+
+### Supprimer une app
 
 ```bash
-node script.js https://github.com/owner/repo/releases/download/v1.0/app-release.apk
+node script.js delete [nom_ou_partie_du_nom]
 ```
 
-GitHub release URLs, artifact download links, and raw CDN links are all supported.
+Exemple:
+```bash
+node script.js delete watchtower
+node script.js delete           # supprime la première app trouvée
+```
 
-## First Run — Login
+### Lister les apps
 
-On the first run, `cookies.json` does not exist yet.  
-The browser will open and navigate to Appetize.io — **log in manually**.  
-Once logged in, the script detects the session and saves cookies automatically.
+```bash
+node script.js list
+```
 
-All future runs skip the login step entirely.
+## Première utilisation — Connexion manuelle
 
-## Files
+Au premier lancement, le navigateur s'ouvre sur Appetize.io.  
+Connecte-toi manuellement. Le script détecte la connexion et sauvegarde la session dans `cookies.json`.  
+Tous les lancements suivants se connectent automatiquement.
 
-| File | Purpose |
-|------|---------|
-| `script.js` | Main automation script |
-| `cookies.json` | Saved session (auto-created after first login) |
-| `app.apk` | Downloaded APK (overwritten each run) |
-| `screenshots/` | Error screenshots for debugging |
+## Variables d'environnement
+
+| Variable | Description |
+|----------|-------------|
+| `GITHUB_PAT` | Personal Access Token GitHub (requis pour les artefacts privés) |
+
+Le PAT est aussi lu depuis les secrets Replit si défini comme `GITHUB_PAT`.
+
+## Fichiers générés
+
+| Fichier | Description |
+|---------|-------------|
+| `cookies.json` | Session Appetize.io (auto-généré après 1er login) |
+| `app.apk` | APK téléchargé (écrasé à chaque run) |
+| `artifact_extracted/` | Contenu extrait du ZIP GitHub |
+| `screenshots/` | Screenshots d'erreur pour debug |
 
 ## Configuration
 
-Edit the `CONFIG` block at the top of `script.js`:
+Édite le bloc `CONFIG` en haut de `script.js` :
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `headless` | `false` | Set `true` to run without opening a browser window |
-| `timeouts.navigation` | 60s | Page load timeout |
-| `timeouts.uploadConfirmation` | 120s | Upload completion wait |
-| `timeouts.manualLogin` | 120s | Time for manual login on first run |
-| `retries.upload` | 3 | Retry attempts for the upload flow |
-| `retries.download` | 3 | Retry attempts for APK download |
+| Option | Défaut | Description |
+|--------|--------|-------------|
+| `headless` | `false` | `true` = pas de fenêtre navigateur |
+| `timeouts.uploadConfirmation` | 180s | Attente max upload |
+| `timeouts.manualLogin` | 180s | Temps pour login manuel |
+| `retries.upload` | 3 | Tentatives en cas d'échec |
+| `retries.download` | 3 | Tentatives téléchargement |
 
-## Troubleshooting
+## Dépannage
 
-- **Login loop** — Delete `cookies.json` and re-run to force a fresh login
-- **Upload button not found** — Appetize.io may have changed their UI; check the `screenshots/` folder
-- **File too large** — GitHub has a 2 GB release asset limit; Appetize.io has its own limits too
-- **Session expired** — Delete `cookies.json` and run again to re-authenticate
+- **Session expirée** → Supprime `cookies.json` et relance
+- **Bouton Delete introuvable** → Consulte `screenshots/delete-button-not-found-*.png`
+- **APK introuvable dans ZIP** → L'artefact ne contient pas de `.apk` — vérifie le run GitHub Actions
+- **403 GitHub** → Ton PAT n'a pas les droits `actions:read` — regénère-le

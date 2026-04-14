@@ -1,0 +1,2 @@
+appetize-uploader/app.apk filter=lfs diff=lfs merge=lfs -text
+appetize-uploader/artifact.zip filter=lfs diff=lfs merge=lfs -text
