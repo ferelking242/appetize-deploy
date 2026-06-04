@@ -251,7 +251,10 @@
 <div class="console-wrap">
   <div class="console-header">
     <span class="ttl">📟 Logs</span>
-    <button class="btn btn-ghost btn-sm" style="padding:4px 10px;font-size:0.7rem;" onclick="clearLogs()">Effacer</button>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-ghost btn-sm" style="padding:4px 10px;font-size:0.7rem;" onclick="copyLogs()" id="copy-btn">Copier</button>
+      <button class="btn btn-ghost btn-sm" style="padding:4px 10px;font-size:0.7rem;" onclick="clearLogs()">Effacer</button>
+    </div>
   </div>
   <div id="console"></div>
 </div>
@@ -305,6 +308,18 @@ function appendLog(raw) {
 }
 
 function clearLogs() { document.getElementById('console').innerHTML = ''; }
+
+function copyLogs() {
+  const el = document.getElementById('console');
+  const text = Array.from(el.children).map(d => d.textContent).join('\n');
+  if (!text.trim()) { toast('Aucun log à copier', false); return; }
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copié!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  }).catch(() => toast('Copie échouée', false));
+}
 
 // ── Time formatting ───────────────────────────────────────────────────────
 function timeAgo(iso) {
