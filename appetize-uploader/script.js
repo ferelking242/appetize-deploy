@@ -315,28 +315,38 @@ async function saveCookies(context) {
   }
 }
 
-async function setupSession(page, context) {
-  log.step("Gestion de session");
-  if (hasSavedCookies()) {
-    const cookies = loadCookies();
-    if (cookies) {
-      await context.addCookies(cookies);
-      log.success("Session restaurée depuis cookies.json — pas besoin de se reconnecter");
-      return;
-    }
-  }
+function isLoginUrl(url) {
+  return /login|sign-in|signin|register|auth/i.test(url);
+}
 
-  log.info("Aucune session sauvegardée → connexion manuelle requise");
+async function isSessionValid(page) {
+  log.info("Vérification de la validité de la session…");
+  try {
+    await page.goto(CONFIG.appetizeUrl, { waitUntil: "domcontentloaded", timeout: CONFIG.timeouts.navigation });
+    await sleep(2000);
+    const url = page.url();
+    if (isLoginUrl(url)) {
+      log.warn(`Session invalide/expirée — redirigé vers: ${url}`);
+      return false;
+    }
+    log.success(`Session valide — URL: ${url}`);
+    return true;
+  } catch (e) {
+    log.warn("Impossible de vérifier la session", e.message);
+    return false;
+  }
+}
+
+async function waitForManualLogin(page, context) {
+  log.info("Aucune session valide → connexion manuelle requise");
   log.info(`Ouvre appetize.io dans le navigateur et connecte-toi.`);
   log.info(`Tu as ${CONFIG.timeouts.manualLogin / 1000}s pour te connecter.`);
-
-  await page.goto(CONFIG.appetizeUrl, { timeout: CONFIG.timeouts.navigation });
 
   const deadline = Date.now() + CONFIG.timeouts.manualLogin;
   while (Date.now() < deadline) {
     await sleep(2000);
     const url = page.url();
-    if (!url.includes("login") && !url.includes("sign-in") && !url.includes("signin")) {
+    if (!isLoginUrl(url) && url.includes("appetize.io")) {
       log.success("Connexion détectée!");
       break;
     }
@@ -345,6 +355,31 @@ async function setupSession(page, context) {
     }
   }
   await saveCookies(context);
+}
+
+async function setupSession(page, context) {
+  log.step("Gestion de session");
+
+  if (hasSavedCookies()) {
+    const cookies = loadCookies();
+    if (cookies) {
+      await context.addCookies(cookies);
+      log.info("Cookies chargés — vérification de la session en cours…");
+
+      const valid = await isSessionValid(page);
+      if (valid) {
+        log.success("Session restaurée avec succès depuis cookies.json");
+        return;
+      }
+
+      log.warn("Session expirée — suppression de cookies.json et reconnexion manuelle requise");
+      try { fs.unlinkSync(CONFIG.cookiesFile); } catch {}
+    }
+  }
+
+  log.info("Aucune session valide sauvegardée → connexion manuelle requise");
+  await page.goto(CONFIG.appetizeUrl, { timeout: CONFIG.timeouts.navigation });
+  await waitForManualLogin(page, context);
 }
 
 // ─────────────────────────────────────────────
@@ -462,9 +497,14 @@ async function waitForUploadConfirmation(page) {
         ':text-matches("success|uploaded|created|ready|complete", "i")',
         { timeout: CONFIG.timeouts.uploadConfirmation, state: "visible" }
       ),
-      // Changement d'URL (redirect vers page app)
+      // Changement d'URL vers une page app (jamais vers login)
       page.waitForURL(
-        (url) => url !== initialUrl && url.includes("appetize.io"),
+        (url) => {
+          const s = url.toString();
+          return s !== initialUrl &&
+                 s.includes("appetize.io") &&
+                 !isLoginUrl(s);
+        },
         { timeout: CONFIG.timeouts.uploadConfirmation }
       ),
       // Bouton Close/Done sur dialog
@@ -478,8 +518,18 @@ async function waitForUploadConfirmation(page) {
         { timeout: CONFIG.timeouts.uploadConfirmation, state: "visible" }
       ),
     ]);
+
+    // Vérification finale : on ne doit pas être sur une page de login
+    const finalUrl = page.url();
+    if (isLoginUrl(finalUrl)) {
+      throw new Error(
+        `Upload échoué — redirigé vers la page de login (${finalUrl}). ` +
+        `Session expirée. Supprime cookies.json et relance pour te reconnecter.`
+      );
+    }
+
     log.success("Upload confirmé avec succès!");
-    log.info(`URL finale: ${page.url()}`);
+    log.info(`URL finale: ${finalUrl}`);
   } catch (e) {
     throw new Error(`Confirmation d'upload non détectée: ${e.message}`);
   }
