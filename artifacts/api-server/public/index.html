@@ -1,282 +1,488 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Appetize Uploader</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding: 20px; }
-    h1 { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
-    .subtitle { color: #64748b; font-size: 0.82rem; margin-bottom: 20px; }
-    .status-bar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #1e2330; border: 1px solid #2d3748; border-radius: 8px; margin-bottom: 16px; font-size: 0.83rem; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .dot-green { background: #10b981; box-shadow: 0 0 6px #10b981; animation: pulse 1.5s infinite; }
-    .dot-gray { background: #6b7280; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
-    .badge-green { background: #064e3b; color: #6ee7b7; }
-    .badge-gray { background: #1f2937; color: #9ca3af; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
-    .card { background: #1e2330; border: 1px solid #2d3748; border-radius: 10px; padding: 18px; }
-    .card h2 { font-size: 0.82rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
-    label { display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; margin-top: 10px; }
-    label:first-of-type { margin-top: 0; }
-    input, textarea, select {
-      width: 100%; background: #0f1117; border: 1px solid #374151; border-radius: 6px;
-      color: #e2e8f0; padding: 8px 10px; font-size: 0.83rem; font-family: inherit; outline: none; transition: border-color 0.15s;
-    }
-    input:focus, textarea:focus, select:focus { border-color: #6366f1; }
-    textarea { resize: vertical; font-family: monospace; font-size: 0.72rem; }
-    .btn { display: inline-flex; align-items: center; gap: 5px; padding: 8px 14px; border-radius: 6px; border: none; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: opacity .15s, transform .1s; }
-    .btn:active { transform: scale(0.97); }
-    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-    .btn-primary { background: #6366f1; color: #fff; }
-    .btn-danger  { background: #ef4444; color: #fff; }
-    .btn-green   { background: #10b981; color: #fff; }
-    .btn-gray    { background: #374151; color: #e2e8f0; }
-    .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-    .msg { font-size: 0.78rem; padding: 5px 10px; border-radius: 5px; margin-top: 8px; display:none; }
-    .msg.show { display: block; }
-    .msg-ok  { background: #064e3b; color: #6ee7b7; }
-    .msg-err { background: #7f1d1d; color: #fca5a5; }
-    .artifact-select { margin-top: 10px; display:none; }
-    .artifact-select.show { display: block; }
-    .console-wrap { background: #0a0c12; border: 1px solid #1e2330; border-radius: 10px; overflow: hidden; }
-    .console-header { background: #1e2330; padding: 9px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d3748; }
-    .console-header span { font-size: 0.83rem; font-weight: 600; color: #94a3b8; }
-    #console { font-family: 'Courier New', monospace; font-size: 0.72rem; line-height: 1.5; padding: 12px 14px; height: 380px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
-    .log-info { color: #93c5fd; }
-    .log-ok   { color: #6ee7b7; }
-    .log-warn { color: #fbbf24; }
-    .log-error { color: #f87171; }
-    .log-step { color: #a78bfa; font-weight: bold; }
-    .log-dashboard { color: #e879f9; }
-    .log-default { color: #cbd5e1; }
-    .spinner { display:inline-block; width:12px; height:12px; border:2px solid #6366f1; border-top-color:transparent; border-radius:50%; animation: spin .6s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Watchtower — Appetize</title>
+<style>
+  :root {
+    --bg: #09090b;
+    --surface: #18181b;
+    --border: #27272a;
+    --muted: #71717a;
+    --text: #fafafa;
+    --sub: #a1a1aa;
+    --green: #22c55e;
+    --green-dim: #14532d;
+    --red: #ef4444;
+    --red-dim: #7f1d1d;
+    --blue: #3b82f6;
+    --blue-dim: #1e3a5f;
+    --purple: #a855f7;
+    --yellow: #eab308;
+    --radius: 12px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100dvh; padding: 16px; max-width: 600px; margin: 0 auto; }
+
+  /* ── Typography ── */
+  h1 { font-size: 1.25rem; font-weight: 700; }
+  h2 { font-size: 0.7rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .sub { font-size: 0.78rem; color: var(--sub); }
+
+  /* ── Card ── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+
+  /* ── Status hero ── */
+  .hero { display: flex; flex-direction: column; gap: 12px; }
+  .hero-row { display: flex; align-items: center; gap: 10px; }
+  .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .dot-yellow { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); animation: blink 1s infinite; }
+  .dot-red { background: var(--red); }
+  .dot-gray { background: var(--border); }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 600; }
+  .pill-green { background: var(--green-dim); color: var(--green); }
+  .pill-red   { background: var(--red-dim);   color: var(--red); }
+  .pill-gray  { background: var(--border);    color: var(--muted); }
+  .pill-blue  { background: var(--blue-dim);  color: var(--blue); }
+
+  .release-card { background: #0f172a; border: 1px solid #1e3a5f; border-radius: 10px; padding: 14px; }
+  .release-tag { font-size: 1.4rem; font-weight: 800; color: var(--blue); }
+  .release-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  /* ── Toggle ── */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .toggle-label { font-size: 1rem; font-weight: 600; }
+  .toggle-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .toggle { position: relative; width: 52px; height: 28px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0; background: var(--border); border-radius: 99px; cursor: pointer;
+    transition: background .2s;
+  }
+  .slider::before {
+    content: ''; position: absolute; width: 20px; height: 20px; left: 4px; top: 4px;
+    background: #fff; border-radius: 50%; transition: transform .2s;
+  }
+  input:checked + .slider { background: var(--green); }
+  input:checked + .slider::before { transform: translateX(24px); }
+
+  /* ── Inputs ── */
+  .field { margin-bottom: 10px; }
+  .field:last-child { margin-bottom: 0; }
+  label.lbl { display: block; font-size: 0.72rem; font-weight: 500; color: var(--muted); margin-bottom: 5px; }
+  input[type=text], input[type=url], input[type=password], textarea {
+    width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); padding: 9px 12px; font-size: 0.85rem; font-family: inherit;
+    outline: none; transition: border-color .15s;
+  }
+  input:focus, textarea:focus { border-color: var(--blue); }
+  textarea { resize: vertical; font-family: monospace; font-size: 0.72rem; line-height: 1.4; }
+
+  /* ── Buttons ── */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 18px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity .15s, transform .1s; width: 100%; }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-green   { background: var(--green); color: #000; }
+  .btn-danger  { background: var(--red); color: #fff; }
+  .btn-ghost   { background: var(--border); color: var(--text); }
+  .btn-sm      { padding: 7px 14px; font-size: 0.78rem; width: auto; }
+  .btn-row     { display: flex; gap: 8px; }
+
+  /* ── Toast ── */
+  #toast-area { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 999; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+  .toast { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 0.82rem; min-width: 220px; text-align: center; animation: slide-in .2s ease; pointer-events: auto; }
+  .toast-ok  { border-color: var(--green); color: var(--green); }
+  .toast-err { border-color: var(--red); color: var(--red); }
+  @keyframes slide-in { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── Console ── */
+  .console-wrap { background: #050507; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .console-header { background: var(--surface); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+  .console-header .ttl { font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+  #console { font-family: 'Courier New', monospace; font-size: 0.7rem; line-height: 1.5; padding: 12px 14px; height: 280px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
+  .li { color: #93c5fd; }
+  .lo { color: #6ee7b7; }
+  .lw { color: #fbbf24; }
+  .le { color: #f87171; }
+  .ls { color: #c084fc; font-weight: 600; }
+  .ld { color: #e879f9; }
+  .lx { color: #71717a; }
+
+  /* ── Collapsible ── */
+  .collapse-btn { display: flex; align-items: center; justify-content: space-between; background: none; border: none; color: var(--text); font-size: 0.72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); cursor: pointer; width: 100%; margin-bottom: 0; padding: 0; }
+  .collapse-btn .arr { transition: transform .2s; }
+  .collapse-btn.open .arr { transform: rotate(180deg); }
+  .collapsible { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
+  .collapsible.open { max-height: 800px; }
+  .collapsible-inner { padding-top: 14px; }
+
+  /* ── Divider ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  /* ── Spinner ── */
+  .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Header ── */
+  .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .app-title { display: flex; align-items: center; gap: 8px; }
+</style>
 </head>
 <body>
-  <h1>🤖 Appetize Uploader</h1>
-  <p class="subtitle">Tableau de bord — sessions &amp; uploads APK</p>
 
-  <div class="status-bar">
-    <div class="dot dot-gray" id="proc-dot"></div>
-    <span id="proc-status">Chargement…</span>
-    <span style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-      Cookies : <span class="badge badge-gray" id="cookie-badge">—</span>
-    </span>
+<div id="toast-area"></div>
+
+<!-- Header -->
+<div class="app-header">
+  <div class="app-title">
+    <span style="font-size:1.5rem">🤖</span>
+    <div>
+      <h1>Watchtower</h1>
+      <div class="sub">Appetize Auto-Uploader</div>
+    </div>
   </div>
+  <div style="display:flex;align-items:center;gap:6px;">
+    <div class="status-dot dot-gray" id="proc-dot"></div>
+    <span class="sub" id="proc-label">—</span>
+  </div>
+</div>
 
-  <div class="grid">
-    <!-- COOKIES -->
-    <div class="card">
-      <h2>🍪 Session Appetize</h2>
-      <p style="font-size:0.78rem;color:#64748b;margin-bottom:10px;">
-        Colle le JSON exporté depuis l'extension <strong>Cookie-Editor</strong> (Export → JSON for Playwright).
+<!-- Release Status -->
+<div class="card">
+  <h2>Dernière release</h2>
+  <div id="release-loading" class="sub" style="text-align:center;padding:8px 0;">
+    <span class="spin" style="vertical-align:middle;margin-right:6px;"></span> Chargement…
+  </div>
+  <div id="release-info" style="display:none;">
+    <div class="release-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+        <div>
+          <div class="release-tag" id="release-tag">—</div>
+          <div class="release-meta" id="release-meta">—</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+          <span class="pill pill-gray" id="release-status-pill">—</span>
+        </div>
+      </div>
+      <div style="margin-top:10px;" class="sub" id="release-apk">—</div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;">
+      <button class="btn btn-green btn-sm" id="upload-now-btn" onclick="uploadNow()">⬆ Upload maintenant</button>
+      <button class="btn btn-ghost btn-sm" onclick="refreshRelease()">↻ Actualiser</button>
+      <button class="btn btn-danger btn-sm" id="stop-btn" onclick="stopUpload()" disabled>⏹ Stop</button>
+    </div>
+  </div>
+  <div id="release-error" style="display:none;color:var(--red);font-size:0.8rem;padding:8px 0;"></div>
+</div>
+
+<!-- Auto Monitor -->
+<div class="card">
+  <div class="toggle-row">
+    <div>
+      <div class="toggle-label">Auto-Monitor</div>
+      <div class="toggle-sub" id="monitor-sub">Surveillance des nouvelles releases</div>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" id="monitor-toggle" onchange="toggleMonitor(this.checked)"/>
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;" id="monitor-meta" style="display:none">
+    <span class="pill pill-gray" id="last-check-pill" style="display:none">Dernière vérif: —</span>
+    <span class="pill pill-gray" id="last-upload-pill" style="display:none">Dernier upload: —</span>
+  </div>
+  <div id="monitor-error" style="display:none;color:var(--red);font-size:0.75rem;margin-top:8px;"></div>
+</div>
+
+<!-- Config (collapsible) -->
+<div class="card">
+  <button class="collapse-btn" id="config-btn" onclick="toggleSection('config')">
+    <span>⚙ Configuration</span>
+    <span class="arr">▾</span>
+  </button>
+  <div class="collapsible" id="config-section">
+    <div class="collapsible-inner">
+      <div class="field">
+        <label class="lbl">URL du repo GitHub</label>
+        <input type="url" id="repo-url" placeholder="https://github.com/ferelking242/watchtower" />
+      </div>
+      <div class="field">
+        <label class="lbl">GitHub PAT (token privé — nécessaire pour repos privés)</label>
+        <input type="password" id="github-pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-primary" onclick="saveConfig()">💾 Sauvegarder la config</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cookies (collapsible) -->
+<div class="card">
+  <button class="collapse-btn" id="cookies-btn" onclick="toggleSection('cookies')">
+    <span>🍪 Session Appetize</span>
+    <span class="arr">▾</span>
+  </button>
+  <div class="collapsible" id="cookies-section">
+    <div class="collapsible-inner">
+      <p class="sub" style="margin-bottom:10px;">
+        Colle le JSON depuis l'extension <strong>Cookie-Editor</strong> (Export → JSON for Playwright).
       </p>
-      <label>Contenu cookies.json</label>
-      <textarea id="cookies-input" rows="7" placeholder='[{"name":"connect.sid","value":"...","domain":"appetize.io",...}]'></textarea>
-      <div id="cookie-msg" class="msg"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveCookies()">💾 Sauvegarder</button>
-        <button class="btn btn-danger" onclick="deleteCookies()">🗑 Supprimer</button>
+      <div class="field">
+        <label class="lbl">cookies.json</label>
+        <textarea id="cookies-input" rows="6" placeholder='[{"name":"connect.sid","value":"...","domain":"appetize.io",...}]'></textarea>
       </div>
-    </div>
-
-    <!-- UPLOAD -->
-    <div class="card">
-      <h2>🚀 Upload APK</h2>
-      <label>URL du run GitHub Actions</label>
-      <input type="url" id="run-url" placeholder="https://github.com/owner/repo/actions/runs/12345678"
-             oninput="onUrlChange()" />
-
-      <div id="fetch-status" style="font-size:0.75rem;color:#64748b;margin-top:6px;min-height:18px;"></div>
-
-      <div class="artifact-select" id="artifact-wrap">
-        <label>Artefact à uploader</label>
-        <select id="artifact-select"></select>
+      <div class="btn-row" style="margin-top:10px;">
+        <button class="btn btn-primary" onclick="saveCookies()" style="flex:1;">💾 Sauvegarder</button>
+        <button class="btn btn-danger" onclick="deleteCookies()" style="flex:1;">🗑 Supprimer</button>
       </div>
-
-      <div id="run-msg" class="msg"></div>
-      <div class="btn-row">
-        <button class="btn btn-green" id="run-btn" onclick="runUpload()" disabled>▶ Lancer l'upload</button>
-        <button class="btn btn-danger" id="stop-btn" onclick="stopScript()" disabled>⏹ Arrêter</button>
-      </div>
+      <div style="margin-top:8px;text-align:center;" class="sub" id="cookie-status">Vérification…</div>
     </div>
   </div>
+</div>
 
-  <!-- CONSOLE -->
-  <div class="console-wrap">
-    <div class="console-header">
-      <span>📟 Logs en temps réel</span>
-      <button class="btn btn-gray" style="padding:4px 10px;font-size:0.72rem;" onclick="clearConsole()">Effacer</button>
-    </div>
-    <div id="console"></div>
+<!-- Logs -->
+<div class="console-wrap">
+  <div class="console-header">
+    <span class="ttl">📟 Logs</span>
+    <button class="btn btn-ghost btn-sm" style="padding:4px 10px;font-size:0.7rem;" onclick="clearLogs()">Effacer</button>
   </div>
+  <div id="console"></div>
+</div>
 
-  <script>
-    const BASE = '';
-    let parsedRun = null;
-    let fetchTimer = null;
+<script>
+const API = '';
 
-    // ── SSE ──
-    let sse = null;
-    function connectSSE() {
-      if (sse) sse.close();
-      sse = new EventSource(`${BASE}/api/appetize/logs`);
-      sse.onmessage = (e) => {
-        try { appendLog(JSON.parse(e.data)); } catch { appendLog(e.data); }
-      };
-      sse.onerror = () => {
-        setTimeout(connectSSE, 3000);
-      };
-    }
-    connectSSE();
+// ── Toast ────────────────────────────────────────────────────────────────
+function toast(msg, ok=true) {
+  const el = document.createElement('div');
+  el.className = 'toast ' + (ok ? 'toast-ok' : 'toast-err');
+  el.textContent = msg;
+  document.getElementById('toast-area').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
 
-    function appendLog(raw) {
-      const el = document.getElementById('console');
-      const div = document.createElement('div');
-      let cls = 'log-default';
-      if (raw.includes('[INFO]'))       cls = 'log-info';
-      else if (raw.includes('[OK]'))    cls = 'log-ok';
-      else if (raw.includes('[WARN]'))  cls = 'log-warn';
-      else if (raw.includes('[ERROR]') || raw.includes('[ERR]')) cls = 'log-error';
-      else if (raw.includes('[STEP]'))  cls = 'log-step';
-      else if (raw.includes('[DASHBOARD]')) cls = 'log-dashboard';
-      else if (raw.includes('═'))       cls = 'log-step';
-      div.className = cls;
-      div.textContent = raw;
-      el.appendChild(div);
-      el.scrollTop = el.scrollHeight;
-    }
+// ── Collapsible ──────────────────────────────────────────────────────────
+function toggleSection(id) {
+  const sec = document.getElementById(id + '-section');
+  const btn = document.getElementById(id + '-btn');
+  const open = sec.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
 
-    function clearConsole() { document.getElementById('console').innerHTML = ''; }
+// ── SSE ──────────────────────────────────────────────────────────────────
+let sse = null;
+function connectSSE() {
+  if (sse) sse.close();
+  sse = new EventSource(`${API}/api/appetize/logs`);
+  sse.onmessage = (e) => {
+    try { appendLog(JSON.parse(e.data)); } catch { appendLog(e.data); }
+  };
+  sse.onerror = () => setTimeout(connectSSE, 3000);
+}
+connectSSE();
 
-    // ── Status polling ──
-    async function fetchStatus() {
-      try {
-        const d = await (await fetch(`${BASE}/api/appetize/status`)).json();
-        const dot = document.getElementById('proc-dot');
-        const label = document.getElementById('proc-status');
-        const badge = document.getElementById('cookie-badge');
-        const runBtn = document.getElementById('run-btn');
-        const stopBtn = document.getElementById('stop-btn');
+function appendLog(raw) {
+  const el = document.getElementById('console');
+  const d = document.createElement('div');
+  let cls = 'lx';
+  if (raw.includes('[INFO]'))       cls = 'li';
+  else if (raw.includes('[OK]'))    cls = 'lo';
+  else if (raw.includes('[WARN]'))  cls = 'lw';
+  else if (raw.includes('[ERROR]') || raw.includes('[ERR]') || raw.includes('❌')) cls = 'le';
+  else if (raw.includes('[STEP]') || raw.includes('═') || raw.includes('✅')) cls = 'ls';
+  else if (raw.includes('[MONITOR]') || raw.includes('[AUTO]') || raw.includes('[UPLOAD]') || raw.includes('[CONFIG]') || raw.includes('[COOKIES]')) cls = 'ld';
+  d.className = cls;
+  d.textContent = raw;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
 
-        if (d.running) {
-          dot.className = 'dot dot-green';
-          label.textContent = 'Processus en cours…';
-          runBtn.disabled = true;
-          stopBtn.disabled = false;
-        } else {
-          dot.className = 'dot dot-gray';
-          label.textContent = 'Aucun processus actif';
-          runBtn.disabled = !parsedRun;
-          stopBtn.disabled = true;
-        }
+function clearLogs() { document.getElementById('console').innerHTML = ''; }
 
-        badge.textContent = d.cookiesExist ? '✓ Présents' : '✗ Absents';
-        badge.className = d.cookiesExist ? 'badge badge-green' : 'badge badge-gray';
-      } catch {}
-    }
-    fetchStatus();
-    setInterval(fetchStatus, 3000);
+// ── Time formatting ───────────────────────────────────────────────────────
+function timeAgo(iso) {
+  if (!iso) return '—';
+  const diff = (Date.now() - new Date(iso)) / 1000;
+  if (diff < 60) return 'à l\'instant';
+  if (diff < 3600) return `il y a ${Math.floor(diff/60)} min`;
+  if (diff < 86400) return `il y a ${Math.floor(diff/3600)}h`;
+  return `il y a ${Math.floor(diff/86400)}j`;
+}
 
-    // ── URL parsing & artifact fetch ──
-    function onUrlChange() {
-      clearTimeout(fetchTimer);
-      fetchTimer = setTimeout(fetchArtifacts, 600);
-    }
+// ── Status polling ────────────────────────────────────────────────────────
+async function poll() {
+  try {
+    const s = await (await fetch(`${API}/api/appetize/status`)).json();
 
-    async function fetchArtifacts() {
-      const url = document.getElementById('run-url').value.trim();
-      const statusEl = document.getElementById('fetch-status');
-      const wrap = document.getElementById('artifact-wrap');
-      const sel = document.getElementById('artifact-select');
-      const runBtn = document.getElementById('run-btn');
-      parsedRun = null;
-      runBtn.disabled = true;
-      wrap.classList.remove('show');
-
-      if (!url.includes('github.com')) return;
-
-      statusEl.innerHTML = '<span class="spinner"></span> Récupération des artefacts…';
-
-      try {
-        const r = await fetch(`${BASE}/api/appetize/artifacts?url=${encodeURIComponent(url)}`);
-        const d = await r.json();
-        if (!r.ok) { statusEl.textContent = '⚠ ' + d.error; return; }
-
-        parsedRun = d;
-        if (d.artifacts.length === 0) {
-          statusEl.textContent = '⚠ Aucun artefact dans ce run.';
-          return;
-        }
-
-        sel.innerHTML = '';
-        for (const a of d.artifacts) {
-          const opt = document.createElement('option');
-          opt.value = a.name;
-          opt.textContent = `${a.name} (${a.sizeMb} MB)`;
-          sel.appendChild(opt);
-        }
-
-        wrap.classList.add('show');
-        runBtn.disabled = false;
-        statusEl.textContent = `✓ ${d.artifacts.length} artefact(s) trouvé(s) — ${d.repo} #${d.runId}`;
-        statusEl.style.color = '#6ee7b7';
-      } catch (e) {
-        statusEl.textContent = '⚠ Erreur: ' + e.message;
-        statusEl.style.color = '#f87171';
-      }
+    // Process dot
+    const dot = document.getElementById('proc-dot');
+    const procLbl = document.getElementById('proc-label');
+    if (s.running) {
+      dot.className = 'status-dot dot-yellow';
+      procLbl.textContent = 'Upload en cours…';
+      document.getElementById('upload-now-btn').disabled = true;
+      document.getElementById('stop-btn').disabled = false;
+    } else {
+      dot.className = s.monitor.enabled ? 'status-dot dot-green' : 'status-dot dot-gray';
+      procLbl.textContent = s.monitor.enabled ? 'Actif' : 'Inactif';
+      document.getElementById('upload-now-btn').disabled = false;
+      document.getElementById('stop-btn').disabled = true;
     }
 
-    // ── Actions ──
-    function showMsg(id, text, ok) {
-      const el = document.getElementById(id);
-      el.className = 'msg show ' + (ok ? 'msg-ok' : 'msg-err');
-      el.textContent = text;
-      setTimeout(() => { el.className = 'msg'; }, 4000);
+    // Monitor toggle
+    document.getElementById('monitor-toggle').checked = s.monitor.enabled;
+    const monSub = document.getElementById('monitor-sub');
+    if (s.monitor.enabled) {
+      monSub.textContent = `Vérifie toutes les 5 min · Vu: ${s.monitor.lastCheck ? timeAgo(s.monitor.lastCheck) : '—'}`;
+    } else {
+      monSub.textContent = 'Activez pour uploader automatiquement les nouvelles releases';
     }
 
-    async function saveCookies() {
-      const raw = document.getElementById('cookies-input').value.trim();
-      if (!raw) { showMsg('cookie-msg', 'Colle tes cookies JSON d\'abord', false); return; }
-      try { JSON.parse(raw); } catch { showMsg('cookie-msg', 'JSON invalide — vérifie le format', false); return; }
-      const r = await fetch(`${BASE}/api/appetize/cookies`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cookies: raw }),
-      });
-      const d = await r.json();
-      r.ok ? showMsg('cookie-msg', '✓ Cookies sauvegardés', true) : showMsg('cookie-msg', d.error || 'Erreur', false);
-      fetchStatus();
+    // Pills
+    const lcPill = document.getElementById('last-check-pill');
+    const luPill = document.getElementById('last-upload-pill');
+    if (s.monitor.lastCheck) {
+      lcPill.textContent = `Vérifié ${timeAgo(s.monitor.lastCheck)}`;
+      lcPill.style.display = '';
+    }
+    if (s.monitor.lastUploadedTag) {
+      luPill.textContent = `Uploadé: ${s.monitor.lastUploadedTag}`;
+      luPill.style.display = '';
+      luPill.className = 'pill pill-green';
     }
 
-    async function deleteCookies() {
-      const r = await fetch(`${BASE}/api/appetize/cookies`, { method: 'DELETE' });
-      const d = await r.json();
-      r.ok ? showMsg('cookie-msg', 'Cookies supprimés', true) : showMsg('cookie-msg', d.error || 'Erreur', false);
-      fetchStatus();
+    const errEl = document.getElementById('monitor-error');
+    if (s.monitor.lastError) {
+      errEl.textContent = '⚠ ' + s.monitor.lastError;
+      errEl.style.display = '';
+    } else {
+      errEl.style.display = 'none';
     }
 
-    async function runUpload() {
-      if (!parsedRun) return;
-      const artifactName = document.getElementById('artifact-select').value;
-      const r = await fetch(`${BASE}/api/appetize/run`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: 'upload', repo: parsedRun.repo, runId: parsedRun.runId, artifactName }),
-      });
-      const d = await r.json();
-      r.ok ? showMsg('run-msg', '✓ Upload lancé — PID ' + d.pid, true) : showMsg('run-msg', d.error || 'Erreur', false);
-      fetchStatus();
+    // Cookie status
+    const cs = document.getElementById('cookie-status');
+    cs.textContent = s.cookiesExist ? '✓ Session active' : '✗ Aucune session — connectez-vous';
+    cs.style.color = s.cookiesExist ? 'var(--green)' : 'var(--red)';
+
+    // Pre-fill config if set
+    if (s.monitor.repoUrl && !document.getElementById('repo-url').dataset.filled) {
+      document.getElementById('repo-url').value = s.monitor.repoUrl;
+      document.getElementById('repo-url').dataset.filled = '1';
+    }
+  } catch {}
+}
+poll();
+setInterval(poll, 4000);
+
+// ── Release info ──────────────────────────────────────────────────────────
+async function refreshRelease() {
+  document.getElementById('release-loading').style.display = '';
+  document.getElementById('release-info').style.display = 'none';
+  document.getElementById('release-error').style.display = 'none';
+  try {
+    const r = await (await fetch(`${API}/api/appetize/release`)).json();
+    if (r.error) throw new Error(r.error);
+
+    document.getElementById('release-tag').textContent = r.tag;
+    const pub = r.publishedAt ? new Date(r.publishedAt).toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'}) : '';
+    document.getElementById('release-meta').textContent = pub + (r.name && r.name !== r.tag ? ` — ${r.name}` : '');
+    document.getElementById('release-apk').textContent = r.apkName ? `📦 ${r.apkName} (${r.apkSizeMb} MB)` : '⚠ Aucun APK dans cette release';
+
+    // Compare with last uploaded
+    const status = await (await fetch(`${API}/api/appetize/status`)).json();
+    const pill = document.getElementById('release-status-pill');
+    if (status.monitor.lastUploadedTag === r.tag) {
+      pill.textContent = '✓ Uploadé';
+      pill.className = 'pill pill-green';
+    } else if (status.monitor.lastUploadedTag) {
+      pill.textContent = '🆕 Nouvelle';
+      pill.className = 'pill pill-blue';
+    } else {
+      pill.textContent = 'Non uploadé';
+      pill.className = 'pill pill-gray';
     }
 
-    async function stopScript() {
-      const r = await fetch(`${BASE}/api/appetize/stop`, { method: 'POST' });
-      const d = await r.json();
-      r.ok ? showMsg('run-msg', 'Arrêt envoyé', true) : showMsg('run-msg', d.error, false);
-    }
-  </script>
+    document.getElementById('release-loading').style.display = 'none';
+    document.getElementById('release-info').style.display = '';
+  } catch (e) {
+    document.getElementById('release-loading').style.display = 'none';
+    const errEl = document.getElementById('release-error');
+    errEl.textContent = '⚠ ' + e.message + (e.message.includes('401') ? ' — vérifie le PAT' : e.message.includes('non configurée') ? ' — configure le repo ci-dessous' : '');
+    errEl.style.display = '';
+  }
+}
+refreshRelease();
+
+// ── Monitor ───────────────────────────────────────────────────────────────
+async function toggleMonitor(enabled) {
+  const url = enabled ? '/api/appetize/monitor/start' : '/api/appetize/monitor/stop';
+  try {
+    const r = await fetch(`${API}${url}`, { method: 'POST' });
+    const d = await r.json();
+    if (!r.ok) { toast(d.error || 'Erreur', false); document.getElementById('monitor-toggle').checked = !enabled; }
+    else toast(enabled ? '✓ Monitor activé' : 'Monitor désactivé', enabled);
+  } catch { toast('Erreur réseau', false); document.getElementById('monitor-toggle').checked = !enabled; }
+}
+
+// ── Config ────────────────────────────────────────────────────────────────
+async function saveConfig() {
+  const repoUrl = document.getElementById('repo-url').value.trim();
+  const pat = document.getElementById('github-pat').value.trim();
+  if (!repoUrl) { toast('URL du repo requise', false); return; }
+  try {
+    const r = await fetch(`${API}/api/appetize/config`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ repoUrl, pat }),
+    });
+    const d = await r.json();
+    r.ok ? toast('✓ Config sauvegardée') : toast(d.error || 'Erreur', false);
+    if (r.ok) { document.getElementById('github-pat').value = ''; refreshRelease(); }
+  } catch { toast('Erreur réseau', false); }
+}
+
+// ── Upload ────────────────────────────────────────────────────────────────
+async function uploadNow() {
+  try {
+    const r = await fetch(`${API}/api/appetize/upload-now`, { method: 'POST' });
+    const d = await r.json();
+    r.ok ? toast('✓ Upload démarré') : toast(d.error || 'Erreur', false);
+  } catch { toast('Erreur réseau', false); }
+}
+
+async function stopUpload() {
+  try {
+    await fetch(`${API}/api/appetize/stop`, { method: 'POST' });
+    toast('Arrêt envoyé');
+  } catch { toast('Erreur', false); }
+}
+
+// ── Cookies ───────────────────────────────────────────────────────────────
+async function saveCookies() {
+  const raw = document.getElementById('cookies-input').value.trim();
+  if (!raw) { toast('Colle tes cookies JSON d\'abord', false); return; }
+  try { JSON.parse(raw); } catch { toast('JSON invalide', false); return; }
+  const r = await fetch(`${API}/api/appetize/cookies`, {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ cookies: raw }),
+  });
+  const d = await r.json();
+  r.ok ? toast('✓ Cookies sauvegardés') : toast(d.error || 'Erreur', false);
+  if (r.ok) document.getElementById('cookies-input').value = '';
+  poll();
+}
+
+async function deleteCookies() {
+  const r = await fetch(`${API}/api/appetize/cookies`, { method: 'DELETE' });
+  const d = await r.json();
+  r.ok ? toast('Session supprimée', true) : toast(d.error || 'Erreur', false);
+  poll();
+}
+</script>
 </body>
 </html>

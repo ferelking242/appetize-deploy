@@ -765,6 +765,47 @@ async function cmdList() {
   }
 }
 
+async function cmdUploadFile() {
+  const apkPath = CONFIG.apkOutputPath;
+  if (!fs.existsSync(apkPath)) {
+    throw new Error(`APK introuvable: ${apkPath} — télécharge-le d'abord`);
+  }
+  const stats = fs.statSync(apkPath);
+  log.info(`APK existant: ${apkPath} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
+
+  const { browser, context, page } = await launchBrowser();
+  try {
+    await setupSession(page, context);
+
+    let lastErr = null;
+    for (let attempt = 1; attempt <= CONFIG.retries.upload; attempt++) {
+      log.step(`Upload — tentative ${attempt}/${CONFIG.retries.upload}`);
+      try {
+        await runUploadFlow(page, apkPath);
+        lastErr = null;
+        break;
+      } catch (err) {
+        lastErr = err;
+        log.error(`Tentative ${attempt} échouée`, err.message);
+        await screenshot(page, `upload-error-${attempt}`);
+        if (attempt < CONFIG.retries.upload) {
+          log.info("Nouvelle tentative dans 5s…");
+          await sleep(5000);
+        }
+      }
+    }
+    if (lastErr) throw lastErr;
+
+    await saveCookies(context);
+    log.step("SUCCÈS");
+    log.success("APK uploadé sur Appetize.io!");
+    log.info("Visible sur: https://appetize.io/apps");
+    await sleep(3000);
+  } finally {
+    await browser.close();
+  }
+}
+
 // ─────────────────────────────────────────────
 // ENTRY POINT
 // ─────────────────────────────────────────────
@@ -807,6 +848,11 @@ Variables d'environnement:
     }
     case "list": {
       await cmdList();
+      break;
+    }
+    case "upload-file": {
+      // Upload l'APK déjà présent sur disque (pas de téléchargement GitHub)
+      await cmdUploadFile();
       break;
     }
     default:
