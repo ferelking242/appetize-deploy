@@ -320,7 +320,8 @@ function normalizeCookies(raw) {
 
 function loadCookies() {
   try {
-    const raw = JSON.parse(fs.readFileSync(CONFIG.cookiesFile, "utf-8"));
+    const cookiesPath = process.env.APPETIZE_COOKIES_FILE || CONFIG.cookiesFile;
+    const raw = JSON.parse(fs.readFileSync(cookiesPath, "utf-8"));
     const cookies = normalizeCookies(raw);
     log.info(`${cookies.length} cookies chargés depuis ${CONFIG.cookiesFile}`);
     return cookies;
