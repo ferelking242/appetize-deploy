@@ -184,7 +184,10 @@ function runUploadProcess(): Promise<void> {
 
     const child = spawn("node", ["script.js", "upload-file"], {
       cwd: APPETIZE_DIR,
-      env: { ...process.env },
+      env: {
+        ...process.env,
+        PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH: process.env.REPLIT_PLAYWRIGHT_CHROMIUM_EXECUTABLE || "",
+      },
       stdio: ["ignore", "pipe", "pipe"],
     });
 
