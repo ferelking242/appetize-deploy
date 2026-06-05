@@ -294,9 +294,34 @@ function hasSavedCookies() {
   return fs.existsSync(CONFIG.cookiesFile);
 }
 
+const SAMESITE_MAP = {
+  no_restriction: "None",
+  unspecified: "None",
+  lax: "Lax",
+  strict: "Strict",
+  none: "None",
+};
+
+function normalizeCookies(raw) {
+  return raw.map((c) => {
+    const out = {
+      name:     c.name,
+      value:    c.value,
+      domain:   c.domain,
+      path:     c.path    || "/",
+      secure:   !!c.secure,
+      httpOnly: !!c.httpOnly,
+      sameSite: SAMESITE_MAP[(c.sameSite || "").toLowerCase()] || "None",
+    };
+    if (c.expirationDate) out.expires = c.expirationDate;
+    return out;
+  });
+}
+
 function loadCookies() {
   try {
-    const cookies = JSON.parse(fs.readFileSync(CONFIG.cookiesFile, "utf-8"));
+    const raw = JSON.parse(fs.readFileSync(CONFIG.cookiesFile, "utf-8"));
+    const cookies = normalizeCookies(raw);
     log.info(`${cookies.length} cookies chargés depuis ${CONFIG.cookiesFile}`);
     return cookies;
   } catch (e) {
