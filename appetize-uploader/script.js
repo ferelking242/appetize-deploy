@@ -727,14 +727,20 @@ async function deleteAppFlow(page, targetName) {
 // ─────────────────────────────────────────────
 async function launchBrowser() {
   log.step("Lancement du navigateur");
-  const browser = await chromium.launch({
+  const launchOpts = {
     headless: CONFIG.headless,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-blink-features=AutomationControlled",
     ],
-  });
+  };
+  const replitChrome = process.env.REPLIT_PLAYWRIGHT_CHROMIUM_EXECUTABLE;
+  if (replitChrome) {
+    launchOpts.executablePath = replitChrome;
+    log.info(`Utilisation du Chromium Replit: ${replitChrome}`);
+  }
+  const browser = await chromium.launch(launchOpts);
   const context = await browser.newContext({
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     viewport: { width: 1280, height: 800 },
