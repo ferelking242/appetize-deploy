@@ -1,277 +1,484 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Watchtower — Appetize</title>
+<title>Watchtower — Appetize Uploader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #09090b;
-    --surface: #18181b;
-    --border: #27272a;
-    --muted: #71717a;
-    --text: #fafafa;
-    --sub: #a1a1aa;
-    --green: #22c55e;
-    --green-dim: #14532d;
-    --red: #ef4444;
-    --red-dim: #7f1d1d;
-    --blue: #3b82f6;
-    --blue-dim: #1e3a5f;
-    --purple: #a855f7;
-    --yellow: #eab308;
-    --radius: 12px;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 15px; }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100dvh; padding: 16px; max-width: 600px; margin: 0 auto; }
+:root {
+  --bg:       #050508;
+  --surface:  #0f0f14;
+  --surface2: #16161d;
+  --border:   #1e1e28;
+  --border2:  #2a2a38;
+  --muted:    #5a5a72;
+  --sub:      #8888a8;
+  --text:     #e8e8f0;
+  --green:    #22d55a;
+  --green-bg: #0a1f10;
+  --red:      #f04444;
+  --red-bg:   #1f0a0a;
+  --blue:     #4f8ef7;
+  --blue-bg:  #0a1228;
+  --purple:   #a87ff7;
+  --purple-bg:#140a28;
+  --amber:    #f0b844;
+  --amber-bg: #1f1400;
+  --radius:   10px;
+  --radius-lg:16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100dvh;
+  padding: 20px 16px 40px;
+}
 
-  /* ── Typography ── */
-  h1 { font-size: 1.25rem; font-weight: 700; }
-  h2 { font-size: 0.7rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
-  .sub { font-size: 0.78rem; color: var(--sub); }
+/* ── Layout ── */
+.shell { max-width: 940px; margin: 0 auto; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 720px) {
+  .grid { grid-template-columns: 1fr 340px; gap: 16px; }
+  .grid .full { grid-column: 1 / -1; }
+}
 
-  /* ── Card ── */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+/* ── Header ── */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; gap: 12px;
+}
+.header-brand { display: flex; align-items: center; gap: 10px; }
+.brand-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: linear-gradient(135deg, #4f8ef7 0%, #a87ff7 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.brand-name { font-size: 1.15rem; font-weight: 800; letter-spacing: -.02em; }
+.brand-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+.header-right { display: flex; align-items: center; gap: 8px; }
 
-  /* ── Status hero ── */
-  .hero { display: flex; flex-direction: column; gap: 12px; }
-  .hero-row { display: flex; align-items: center; gap: 10px; }
-  .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .dot-green { background: var(--green); box-shadow: 0 0 8px var(--green); }
-  .dot-yellow { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); animation: blink 1s infinite; }
-  .dot-red { background: var(--red); }
-  .dot-gray { background: var(--border); }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+/* ── Status badge ── */
+.status-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 99px;
+  border: 1px solid var(--border2); background: var(--surface);
+  font-size: 0.72rem; font-weight: 600; color: var(--sub);
+  cursor: default;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot-green  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.dot-amber  { background: var(--amber); box-shadow: 0 0 6px var(--amber); animation: pulse 1s infinite; }
+.dot-gray   { background: var(--border2); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 600; }
-  .pill-green { background: var(--green-dim); color: var(--green); }
-  .pill-red   { background: var(--red-dim);   color: var(--red); }
-  .pill-gray  { background: var(--border);    color: var(--muted); }
-  .pill-blue  { background: var(--blue-dim);  color: var(--blue); }
+/* ── Card ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px;
+}
+.card + .card { margin-top: 0; }
 
-  .release-card { background: #0f172a; border: 1px solid #1e3a5f; border-radius: 10px; padding: 14px; }
-  .release-tag { font-size: 1.4rem; font-weight: 800; color: var(--blue); }
-  .release-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+/* ── Section title ── */
+.section-title {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+}
 
-  /* ── Toggle ── */
-  .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .toggle-label { font-size: 1rem; font-weight: 600; }
-  .toggle-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-  .toggle { position: relative; width: 52px; height: 28px; flex-shrink: 0; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .slider {
-    position: absolute; inset: 0; background: var(--border); border-radius: 99px; cursor: pointer;
-    transition: background .2s;
-  }
-  .slider::before {
-    content: ''; position: absolute; width: 20px; height: 20px; left: 4px; top: 4px;
-    background: #fff; border-radius: 50%; transition: transform .2s;
-  }
-  input:checked + .slider { background: var(--green); }
-  input:checked + .slider::before { transform: translateX(24px); }
+/* ── Release card ── */
+.release-inner {
+  background: var(--blue-bg); border: 1px solid #1a2a4a;
+  border-radius: var(--radius); padding: 14px;
+}
+.release-tag { font-size: 1.5rem; font-weight: 800; color: var(--blue); letter-spacing: -.03em; }
+.release-date { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+.release-apk { font-size: 0.75rem; color: var(--sub); margin-top: 10px; }
 
-  /* ── Inputs ── */
-  .field { margin-bottom: 10px; }
-  .field:last-child { margin-bottom: 0; }
-  label.lbl { display: block; font-size: 0.72rem; font-weight: 500; color: var(--muted); margin-bottom: 5px; }
-  input[type=text], input[type=url], input[type=password], textarea {
-    width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-    color: var(--text); padding: 9px 12px; font-size: 0.85rem; font-family: inherit;
-    outline: none; transition: border-color .15s;
-  }
-  input:focus, textarea:focus { border-color: var(--blue); }
-  textarea { resize: vertical; font-family: monospace; font-size: 0.72rem; line-height: 1.4; }
+/* ── Pill ── */
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 99px; font-size: 0.68rem; font-weight: 700;
+}
+.pill-green  { background: var(--green-bg); color: var(--green); border: 1px solid #1a4a28; }
+.pill-red    { background: var(--red-bg);   color: var(--red);   border: 1px solid #4a1a1a; }
+.pill-blue   { background: var(--blue-bg);  color: var(--blue);  border: 1px solid #1a2a4a; }
+.pill-gray   { background: var(--surface2); color: var(--sub);   border: 1px solid var(--border2); }
+.pill-amber  { background: var(--amber-bg); color: var(--amber); border: 1px solid #3a2a0a; }
 
-  /* ── Buttons ── */
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 18px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity .15s, transform .1s; width: 100%; }
-  .btn:active { transform: scale(0.97); }
-  .btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
-  .btn-primary { background: var(--blue); color: #fff; }
-  .btn-green   { background: var(--green); color: #000; }
-  .btn-danger  { background: var(--red); color: #fff; }
-  .btn-ghost   { background: var(--border); color: var(--text); }
-  .btn-sm      { padding: 7px 14px; font-size: 0.78rem; width: auto; }
-  .btn-row     { display: flex; gap: 8px; }
+/* ── Buttons ── */
+.btn-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; border: none; border-radius: 8px; cursor: pointer;
+  font-family: inherit; font-weight: 600; transition: opacity .15s, transform .1s;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .3; cursor: not-allowed; transform: none; }
+.btn-sm { padding: 7px 14px; font-size: 0.78rem; }
+.btn-md { padding: 9px 18px; font-size: 0.82rem; }
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-green   { background: var(--green); color: #000; }
+.btn-danger  { background: var(--red); color: #fff; }
+.btn-ghost   { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+.btn-purple  { background: var(--purple-bg); color: var(--purple); border: 1px solid #2a1a4a; }
 
-  /* ── Toast ── */
-  #toast-area { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 999; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
-  .toast { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 0.82rem; min-width: 220px; text-align: center; animation: slide-in .2s ease; pointer-events: auto; }
-  .toast-ok  { border-color: var(--green); color: var(--green); }
-  .toast-err { border-color: var(--red); color: var(--red); }
-  @keyframes slide-in { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+/* ── Toggle ── */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.toggle-label { font-size: 0.9rem; font-weight: 600; }
+.toggle-sub { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+.toggle { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; inset: 0; background: var(--border2); border-radius: 99px; cursor: pointer; transition: background .2s; }
+.slider::before { content:''; position:absolute; width:18px; height:18px; left:4px; top:4px; background:#fff; border-radius:50%; transition:transform .2s; }
+input:checked + .slider { background: var(--green); }
+input:checked + .slider::before { transform: translateX(22px); }
 
-  /* ── Console ── */
-  .console-wrap { background: #050507; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .console-header { background: var(--surface); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-  .console-header .ttl { font-size: 0.78rem; font-weight: 600; color: var(--muted); }
-  #console { font-family: 'Courier New', monospace; font-size: 0.7rem; line-height: 1.5; padding: 12px 14px; height: 280px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
-  .li { color: #93c5fd; }
-  .lo { color: #6ee7b7; }
-  .lw { color: #fbbf24; }
-  .le { color: #f87171; }
-  .ls { color: #c084fc; font-weight: 600; }
-  .ld { color: #e879f9; }
-  .lx { color: #71717a; }
+/* ── Inputs ── */
+.field { margin-bottom: 10px; }
+.field:last-child { margin-bottom: 0; }
+.lbl { display:block; font-size:0.68rem; font-weight:600; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:.06em; }
+input[type=text], input[type=url], input[type=password], textarea {
+  width:100%; background:var(--bg); border:1px solid var(--border2); border-radius:8px;
+  color:var(--text); padding:8px 12px; font-size:0.82rem; font-family:inherit;
+  outline:none; transition:border-color .15s;
+}
+input:focus, textarea:focus { border-color:var(--blue); }
+textarea { resize:vertical; font-family:'JetBrains Mono',monospace; font-size:0.7rem; line-height:1.5; }
 
-  /* ── Collapsible ── */
-  .collapse-btn { display: flex; align-items: center; justify-content: space-between; background: none; border: none; color: var(--text); font-size: 0.72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); cursor: pointer; width: 100%; margin-bottom: 0; padding: 0; }
-  .collapse-btn .arr { transition: transform .2s; }
-  .collapse-btn.open .arr { transform: rotate(180deg); }
-  .collapsible { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
-  .collapsible.open { max-height: 800px; }
-  .collapsible-inner { padding-top: 14px; }
+/* ── API Key block ── */
+.apikey-block {
+  background: var(--purple-bg); border: 1px solid #2a1a4a;
+  border-radius: var(--radius); padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.apikey-val {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--purple);
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  letter-spacing: .04em;
+}
+.apikey-placeholder { color: var(--muted); font-style: italic; }
 
-  /* ── Divider ── */
-  .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+/* ── Endpoint list ── */
+.endpoint-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.endpoint-item {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 0.72rem; padding: 7px 10px;
+  background: var(--surface2); border-radius: 7px; border: 1px solid var(--border);
+}
+.method {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 700;
+  padding: 1px 6px; border-radius: 4px; flex-shrink: 0;
+}
+.method-get    { background: #0a2a1a; color: #4ade80; }
+.method-post   { background: #0a1a2a; color: #60a5fa; }
+.method-delete { background: #2a0a0a; color: #f87171; }
+.ep-path { font-family: 'JetBrains Mono', monospace; color: var(--text); font-size: 0.7rem; }
+.ep-desc { color: var(--muted); font-size: 0.68rem; margin-left: auto; }
+.ep-auth { font-size: 0.6rem; color: var(--amber); margin-left: 4px; }
 
-  /* ── Spinner ── */
-  .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* ── Collapsible ── */
+.collapse-btn {
+  display:flex; align-items:center; justify-content:space-between; background:none; border:none;
+  color:var(--text); font-size:0.65rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); cursor:pointer; width:100%; padding:0; font-family:inherit;
+}
+.arr { transition:transform .2s; font-size:.7rem; }
+.collapse-btn.open .arr { transform:rotate(180deg); }
+.collapsible { overflow:hidden; max-height:0; transition:max-height .3s ease; }
+.collapsible.open { max-height:1000px; }
+.collapsible-inner { padding-top:14px; }
 
-  /* ── Header ── */
-  .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .app-title { display: flex; align-items: center; gap: 8px; }
+/* ── Console ── */
+.console-wrap { background:#03030a; border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+.console-header {
+  background:var(--surface); padding:10px 14px;
+  display:flex; justify-content:space-between; align-items:center;
+  border-bottom:1px solid var(--border);
+}
+.console-title { font-size:0.68rem; font-weight:700; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; }
+#console {
+  font-family:'JetBrains Mono',monospace; font-size:0.68rem; line-height:1.6;
+  padding:12px 14px; height:300px; overflow-y:auto; white-space:pre-wrap; word-break:break-word;
+}
+.li { color:#7ec8fa; }
+.lo { color:#6aeda4; }
+.lw { color:#fbbf24; }
+.le { color:#f87171; }
+.ls { color:#c084fc; font-weight:600; }
+.ld { color:#e879f9; }
+.lx { color:#3a3a50; }
+
+/* ── Toast ── */
+#toast-area { position:fixed; bottom:20px; right:20px; z-index:999; display:flex; flex-direction:column; gap:6px; }
+.toast {
+  background:var(--surface); border:1px solid var(--border2); border-radius:8px;
+  padding:9px 14px; font-size:0.78rem; min-width:180px; text-align:center;
+  animation:slide-up .2s ease;
+}
+.toast-ok  { border-color:var(--green); color:var(--green); }
+.toast-err { border-color:var(--red); color:var(--red); }
+@keyframes slide-up { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── Spinner ── */
+.spin { display:inline-block; width:13px; height:13px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin .6s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── Divider ── */
+hr { border:none; border-top:1px solid var(--border); margin:14px 0; }
+
+/* ── Monitor meta pills ── */
+.monitor-pills { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
 </style>
 </head>
 <body>
-
 <div id="toast-area"></div>
+<div class="shell">
 
-<!-- Header -->
-<div class="app-header">
-  <div class="app-title">
-    <span style="font-size:1.5rem">🤖</span>
+<!-- ── Header ───────────────────────────────────────────────────────────── -->
+<div class="header">
+  <div class="header-brand">
+    <div class="brand-icon">🤖</div>
     <div>
-      <h1>Watchtower</h1>
-      <div class="sub">Appetize Auto-Uploader</div>
+      <div class="brand-name">Watchtower</div>
+      <div class="brand-sub">Appetize Auto-Uploader</div>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:6px;">
-    <div class="status-dot dot-gray" id="proc-dot"></div>
-    <span class="sub" id="proc-label">—</span>
+  <div class="header-right">
+    <a class="btn btn-ghost btn-sm" href="https://ferelking242.github.io/Appetize" target="_blank" style="text-decoration:none">
+      📄 API Docs
+    </a>
+    <div class="status-badge">
+      <div class="dot dot-gray" id="proc-dot"></div>
+      <span id="proc-label">—</span>
+    </div>
   </div>
 </div>
 
-<!-- Release Status -->
-<div class="card">
-  <h2>Dernière release</h2>
-  <div id="release-loading" class="sub" style="text-align:center;padding:8px 0;">
-    <span class="spin" style="vertical-align:middle;margin-right:6px;"></span> Chargement…
-  </div>
-  <div id="release-info" style="display:none;">
-    <div class="release-card">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+<!-- ── Main Grid ─────────────────────────────────────────────────────────── -->
+<div class="grid">
+
+  <!-- ── LEFT COLUMN ── -->
+  <div>
+
+    <!-- Release -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-title">Latest Release</div>
+      <div id="release-loading" style="color:var(--muted);font-size:0.78rem;padding:4px 0">
+        <span class="spin" style="vertical-align:middle;margin-right:6px"></span> Loading…
+      </div>
+      <div id="release-info" style="display:none">
+        <div class="release-inner">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+            <div>
+              <div class="release-tag" id="release-tag">—</div>
+              <div class="release-date" id="release-date">—</div>
+            </div>
+            <span class="pill pill-gray" id="release-pill">—</span>
+          </div>
+          <div class="release-apk" id="release-apk">—</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-green btn-sm" id="upload-btn" onclick="uploadNow()">⬆ Upload now</button>
+          <button class="btn btn-ghost btn-sm" onclick="refreshRelease()">↻ Refresh</button>
+          <button class="btn btn-danger btn-sm" id="stop-btn" onclick="stopUpload()" disabled>⏹ Stop</button>
+        </div>
+      </div>
+      <div id="release-error" style="display:none;color:var(--red);font-size:0.78rem;margin-top:8px"></div>
+    </div>
+
+    <!-- Monitor -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="toggle-row">
         <div>
-          <div class="release-tag" id="release-tag">—</div>
-          <div class="release-meta" id="release-meta">—</div>
+          <div class="toggle-label">Auto-Monitor</div>
+          <div class="toggle-sub" id="monitor-sub">Enable to automatically upload new releases</div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
-          <span class="pill pill-gray" id="release-status-pill">—</span>
+        <label class="toggle">
+          <input type="checkbox" id="monitor-toggle" onchange="toggleMonitor(this.checked)"/>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="monitor-pills" id="monitor-pills"></div>
+      <div id="monitor-error" style="display:none;color:var(--red);font-size:0.72rem;margin-top:8px"></div>
+    </div>
+
+    <!-- Config -->
+    <div class="card" style="margin-bottom:12px">
+      <button class="collapse-btn" id="config-btn" onclick="toggleSection('config')">
+        <span>⚙ Configuration</span>
+        <span class="arr">▾</span>
+      </button>
+      <div class="collapsible" id="config-section">
+        <div class="collapsible-inner">
+          <div class="field">
+            <label class="lbl">GitHub Repo URL</label>
+            <input type="url" id="repo-url" placeholder="https://github.com/owner/repo"/>
+          </div>
+          <div class="field">
+            <label class="lbl">GitHub PAT (for private repos)</label>
+            <input type="password" id="github-pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"/>
+          </div>
+          <div style="margin-top:12px">
+            <button class="btn btn-primary btn-md" style="width:100%" onclick="saveConfig()">💾 Save config</button>
+          </div>
         </div>
       </div>
-      <div style="margin-top:10px;" class="sub" id="release-apk">—</div>
     </div>
-    <div style="margin-top:10px;display:flex;gap:8px;">
-      <button class="btn btn-green btn-sm" id="upload-now-btn" onclick="uploadNow()">⬆ Upload maintenant</button>
-      <button class="btn btn-ghost btn-sm" onclick="refreshRelease()">↻ Actualiser</button>
-      <button class="btn btn-danger btn-sm" id="stop-btn" onclick="stopUpload()" disabled>⏹ Stop</button>
-    </div>
-  </div>
-  <div id="release-error" style="display:none;color:var(--red);font-size:0.8rem;padding:8px 0;"></div>
-</div>
 
-<!-- Auto Monitor -->
-<div class="card">
-  <div class="toggle-row">
-    <div>
-      <div class="toggle-label">Auto-Monitor</div>
-      <div class="toggle-sub" id="monitor-sub">Surveillance des nouvelles releases</div>
+    <!-- Cookies -->
+    <div class="card">
+      <button class="collapse-btn" id="cookies-btn" onclick="toggleSection('cookies')">
+        <span>🍪 Appetize Session</span>
+        <span class="arr">▾</span>
+      </button>
+      <div class="collapsible" id="cookies-section">
+        <div class="collapsible-inner">
+          <p style="font-size:0.75rem;color:var(--muted);margin-bottom:10px">
+            Export cookies from <strong style="color:var(--sub)">Cookie-Editor</strong> → JSON for Playwright, then paste below.
+          </p>
+          <div class="field">
+            <label class="lbl">cookies.json</label>
+            <textarea id="cookies-input" rows="5" placeholder='[{"name":"connect.sid","value":"...","domain":"appetize.io",...}]'></textarea>
+          </div>
+          <div class="btn-row" style="margin-top:10px">
+            <button class="btn btn-primary btn-sm" style="flex:1" onclick="saveCookies()">💾 Save</button>
+            <button class="btn btn-danger btn-sm" style="flex:1" onclick="deleteCookies()">🗑 Delete</button>
+          </div>
+          <div style="margin-top:8px;font-size:0.72rem;text-align:center" id="cookie-status">Checking…</div>
+        </div>
+      </div>
     </div>
-    <label class="toggle">
-      <input type="checkbox" id="monitor-toggle" onchange="toggleMonitor(this.checked)"/>
-      <span class="slider"></span>
-    </label>
-  </div>
-  <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;" id="monitor-meta" style="display:none">
-    <span class="pill pill-gray" id="last-check-pill" style="display:none">Dernière vérif: —</span>
-    <span class="pill pill-gray" id="last-upload-pill" style="display:none">Dernier upload: —</span>
-  </div>
-  <div id="monitor-error" style="display:none;color:var(--red);font-size:0.75rem;margin-top:8px;"></div>
-</div>
 
-<!-- Config (collapsible) -->
-<div class="card">
-  <button class="collapse-btn" id="config-btn" onclick="toggleSection('config')">
-    <span>⚙ Configuration</span>
-    <span class="arr">▾</span>
-  </button>
-  <div class="collapsible" id="config-section">
-    <div class="collapsible-inner">
-      <div class="field">
-        <label class="lbl">URL du repo GitHub</label>
-        <input type="url" id="repo-url" placeholder="https://github.com/ferelking242/watchtower" />
-      </div>
-      <div class="field">
-        <label class="lbl">GitHub PAT (token privé — nécessaire pour repos privés)</label>
-        <input type="password" id="github-pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
-      </div>
-      <div style="margin-top:12px;">
-        <button class="btn btn-primary" onclick="saveConfig()">💾 Sauvegarder la config</button>
-      </div>
-    </div>
-  </div>
-</div>
+  </div><!-- /left -->
 
-<!-- Cookies (collapsible) -->
-<div class="card">
-  <button class="collapse-btn" id="cookies-btn" onclick="toggleSection('cookies')">
-    <span>🍪 Session Appetize</span>
-    <span class="arr">▾</span>
-  </button>
-  <div class="collapsible" id="cookies-section">
-    <div class="collapsible-inner">
-      <p class="sub" style="margin-bottom:10px;">
-        Colle le JSON depuis l'extension <strong>Cookie-Editor</strong> (Export → JSON for Playwright).
-      </p>
-      <div class="field">
-        <label class="lbl">cookies.json</label>
-        <textarea id="cookies-input" rows="6" placeholder='[{"name":"connect.sid","value":"...","domain":"appetize.io",...}]'></textarea>
-      </div>
-      <div class="btn-row" style="margin-top:10px;">
-        <button class="btn btn-primary" onclick="saveCookies()" style="flex:1;">💾 Sauvegarder</button>
-        <button class="btn btn-danger" onclick="deleteCookies()" style="flex:1;">🗑 Supprimer</button>
-      </div>
-      <div style="margin-top:8px;text-align:center;" class="sub" id="cookie-status">Vérification…</div>
-    </div>
-  </div>
-</div>
+  <!-- ── RIGHT COLUMN ── -->
+  <div>
 
-<!-- Logs -->
-<div class="console-wrap">
-  <div class="console-header">
-    <span class="ttl">📟 Logs</span>
-    <div style="display:flex;gap:6px;">
-      <button class="btn btn-ghost btn-sm" style="padding:4px 10px;font-size:0.7rem;" onclick="copyLogs()" id="copy-btn">Copier</button>
-      <button class="btn btn-ghost btn-sm" style="padding:4px 10px;font-size:0.7rem;" onclick="clearLogs()">Effacer</button>
+    <!-- API Key -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-title" style="margin-bottom:10px">🔑 API Key</div>
+      <div class="apikey-block">
+        <div class="apikey-val" id="apikey-val">
+          <span class="apikey-placeholder">Loading…</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="toggleRevealKey()" id="reveal-btn" style="flex-shrink:0">Reveal</button>
+        <button class="btn btn-purple btn-sm" onclick="copyApiKey()" style="flex-shrink:0">Copy</button>
+      </div>
+      <div style="margin-top:10px;font-size:0.7rem;color:var(--muted);line-height:1.5">
+        Send as: <code style="color:var(--purple);font-family:'JetBrains Mono',monospace">Authorization: Bearer &lt;key&gt;</code><br>
+        or: <code style="color:var(--purple);font-family:'JetBrains Mono',monospace">X-Api-Key: &lt;key&gt;</code>
+      </div>
+      <div style="margin-top:10px">
+        <a href="https://ferelking242.github.io/Appetize" target="_blank"
+           class="btn btn-ghost btn-sm" style="text-decoration:none;width:100%;justify-content:center">
+          📄 Full API Documentation →
+        </a>
+      </div>
+    </div>
+
+    <!-- API Base URL -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-title" style="margin-bottom:10px">🌐 API Base URL</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--blue);background:var(--blue-bg);border:1px solid #1a2a4a;border-radius:7px;padding:8px 10px;word-break:break-all" id="base-url-display">
+        —
+      </div>
+      <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="copyBaseUrl()">Copy base URL</button>
+    </div>
+
+    <!-- Endpoints -->
+    <div class="card">
+      <div class="section-title" style="margin-bottom:10px">🔌 Endpoints</div>
+      <ul class="endpoint-list">
+        <li class="endpoint-item">
+          <span class="method method-get">GET</span>
+          <span class="ep-path">/api/v1/status</span>
+        </li>
+        <li class="endpoint-item">
+          <span class="method method-get">GET</span>
+          <span class="ep-path">/api/v1/release</span>
+        </li>
+        <li class="endpoint-item">
+          <span class="method method-get">GET</span>
+          <span class="ep-path">/api/v1/logs</span>
+          <span class="ep-desc">SSE</span>
+        </li>
+        <li class="endpoint-item">
+          <span class="method method-post">POST</span>
+          <span class="ep-path">/api/v1/upload</span>
+          <span class="ep-auth">🔒</span>
+        </li>
+        <li class="endpoint-item">
+          <span class="method method-post">POST</span>
+          <span class="ep-path">/api/v1/upload/url</span>
+          <span class="ep-auth">🔒</span>
+        </li>
+        <li class="endpoint-item">
+          <span class="method method-post">POST</span>
+          <span class="ep-path">/api/v1/cookies</span>
+          <span class="ep-auth">🔒</span>
+        </li>
+        <li class="endpoint-item">
+          <span class="method method-delete">DELETE</span>
+          <span class="ep-path">/api/v1/cookies</span>
+          <span class="ep-auth">🔒</span>
+        </li>
+        <li class="endpoint-item">
+          <span class="method method-post">POST</span>
+          <span class="ep-path">/api/v1/config</span>
+          <span class="ep-auth">🔒</span>
+        </li>
+        <li class="endpoint-item">
+          <span class="method method-post">POST</span>
+          <span class="ep-path">/api/v1/monitor/start</span>
+          <span class="ep-auth">🔒</span>
+        </li>
+        <li class="endpoint-item">
+          <span class="method method-post">POST</span>
+          <span class="ep-path">/api/v1/monitor/stop</span>
+          <span class="ep-auth">🔒</span>
+        </li>
+      </ul>
+    </div>
+
+  </div><!-- /right -->
+
+  <!-- ── CONSOLE (full width) ── -->
+  <div class="full">
+    <div class="console-wrap">
+      <div class="console-header">
+        <span class="console-title">📟 Logs</span>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" style="padding:4px 10px;font-size:0.68rem" onclick="copyLogs()" id="copy-btn">Copy</button>
+          <button class="btn btn-ghost btn-sm" style="padding:4px 10px;font-size:0.68rem" onclick="clearLogs()">Clear</button>
+        </div>
+      </div>
+      <div id="console"></div>
     </div>
   </div>
-  <div id="console"></div>
-</div>
+
+</div><!-- /grid -->
+</div><!-- /shell -->
 
 <script>
-const API = '';
+// ── Base URL ──────────────────────────────────────────────────────────────
+const BASE = window.location.origin;
+document.getElementById('base-url-display').textContent = BASE + '/api/v1';
 
-// ── Toast ────────────────────────────────────────────────────────────────
-function toast(msg, ok=true) {
+// ── Toast ──────────────────────────────────────────────────────────────────
+function toast(msg, ok = true) {
   const el = document.createElement('div');
   el.className = 'toast ' + (ok ? 'toast-ok' : 'toast-err');
   el.textContent = msg;
   document.getElementById('toast-area').appendChild(el);
-  setTimeout(() => el.remove(), 3000);
+  setTimeout(() => el.remove(), 2800);
 }
 
-// ── Collapsible ──────────────────────────────────────────────────────────
+// ── Collapsible ────────────────────────────────────────────────────────────
 function toggleSection(id) {
   const sec = document.getElementById(id + '-section');
   const btn = document.getElementById(id + '-btn');
@@ -279,11 +486,11 @@ function toggleSection(id) {
   btn.classList.toggle('open', open);
 }
 
-// ── SSE ──────────────────────────────────────────────────────────────────
+// ── SSE ────────────────────────────────────────────────────────────────────
 let sse = null;
 function connectSSE() {
   if (sse) sse.close();
-  sse = new EventSource(`${API}/api/appetize/logs`);
+  sse = new EventSource('/api/appetize/logs');
   sse.onmessage = (e) => {
     try { appendLog(JSON.parse(e.data)); } catch { appendLog(e.data); }
   };
@@ -295,12 +502,12 @@ function appendLog(raw) {
   const el = document.getElementById('console');
   const d = document.createElement('div');
   let cls = 'lx';
-  if (raw.includes('[INFO]'))       cls = 'li';
-  else if (raw.includes('[OK]'))    cls = 'lo';
-  else if (raw.includes('[WARN]'))  cls = 'lw';
+  if (raw.includes('[INFO]'))                                            cls = 'li';
+  else if (raw.includes('[OK]') || raw.includes('✅'))                  cls = 'lo';
+  else if (raw.includes('[WARN]'))                                       cls = 'lw';
   else if (raw.includes('[ERROR]') || raw.includes('[ERR]') || raw.includes('❌')) cls = 'le';
-  else if (raw.includes('[STEP]') || raw.includes('═') || raw.includes('✅')) cls = 'ls';
-  else if (raw.includes('[MONITOR]') || raw.includes('[AUTO]') || raw.includes('[UPLOAD]') || raw.includes('[CONFIG]') || raw.includes('[COOKIES]')) cls = 'ld';
+  else if (raw.includes('[STEP]') || raw.includes('═'))                 cls = 'ls';
+  else if (/\[(MONITOR|AUTO|UPLOAD|CONFIG|COOKIES|API)\]/.test(raw))    cls = 'ld';
   d.className = cls;
   d.textContent = raw;
   el.appendChild(d);
@@ -308,70 +515,96 @@ function appendLog(raw) {
 }
 
 function clearLogs() { document.getElementById('console').innerHTML = ''; }
-
 function copyLogs() {
   const el = document.getElementById('console');
   const text = Array.from(el.children).map(d => d.textContent).join('\n');
-  if (!text.trim()) { toast('Aucun log à copier', false); return; }
+  if (!text.trim()) { toast('No logs to copy', false); return; }
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copy-btn');
     const orig = btn.textContent;
-    btn.textContent = '✓ Copié!';
-    setTimeout(() => { btn.textContent = orig; }, 1500);
-  }).catch(() => toast('Copie échouée', false));
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  }).catch(() => toast('Copy failed', false));
 }
 
-// ── Time formatting ───────────────────────────────────────────────────────
+// ── API Key ────────────────────────────────────────────────────────────────
+let _apiKey = null;
+let keyRevealed = false;
+
+async function loadApiKey() {
+  try {
+    const r = await fetch('/api/appetize/api-key');
+    const d = await r.json();
+    _apiKey = d.apiKey || null;
+    updateKeyDisplay();
+  } catch {}
+}
+
+function updateKeyDisplay() {
+  const el = document.getElementById('apikey-val');
+  if (!_apiKey) { el.innerHTML = '<span class="apikey-placeholder">Unavailable</span>'; return; }
+  el.textContent = keyRevealed ? _apiKey : _apiKey.slice(0, 8) + '••••••••••••••••••••••••••••';
+}
+
+function toggleRevealKey() {
+  keyRevealed = !keyRevealed;
+  document.getElementById('reveal-btn').textContent = keyRevealed ? 'Hide' : 'Reveal';
+  updateKeyDisplay();
+}
+
+function copyApiKey() {
+  if (!_apiKey) { toast('Key not loaded', false); return; }
+  navigator.clipboard.writeText(_apiKey).then(() => toast('✓ API key copied')).catch(() => toast('Copy failed', false));
+}
+
+function copyBaseUrl() {
+  navigator.clipboard.writeText(BASE + '/api/v1').then(() => toast('✓ Base URL copied')).catch(() => toast('Copy failed', false));
+}
+
+loadApiKey();
+
+// ── Time helpers ───────────────────────────────────────────────────────────
 function timeAgo(iso) {
   if (!iso) return '—';
   const diff = (Date.now() - new Date(iso)) / 1000;
-  if (diff < 60) return 'à l\'instant';
-  if (diff < 3600) return `il y a ${Math.floor(diff/60)} min`;
-  if (diff < 86400) return `il y a ${Math.floor(diff/3600)}h`;
-  return `il y a ${Math.floor(diff/86400)}j`;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
 }
 
-// ── Status polling ────────────────────────────────────────────────────────
+// ── Status polling ─────────────────────────────────────────────────────────
 async function poll() {
   try {
-    const s = await (await fetch(`${API}/api/appetize/status`)).json();
-
-    // Process dot
+    const s = await (await fetch('/api/appetize/status')).json();
     const dot = document.getElementById('proc-dot');
-    const procLbl = document.getElementById('proc-label');
+    const lbl = document.getElementById('proc-label');
+
     if (s.running) {
-      dot.className = 'status-dot dot-yellow';
-      procLbl.textContent = 'Upload en cours…';
-      document.getElementById('upload-now-btn').disabled = true;
+      dot.className = 'dot dot-amber';
+      lbl.textContent = 'Uploading…';
+      document.getElementById('upload-btn').disabled = true;
       document.getElementById('stop-btn').disabled = false;
     } else {
-      dot.className = s.monitor.enabled ? 'status-dot dot-green' : 'status-dot dot-gray';
-      procLbl.textContent = s.monitor.enabled ? 'Actif' : 'Inactif';
-      document.getElementById('upload-now-btn').disabled = false;
+      dot.className = s.monitor.enabled ? 'dot dot-green' : 'dot dot-gray';
+      lbl.textContent = s.monitor.enabled ? 'Active' : 'Idle';
+      document.getElementById('upload-btn').disabled = false;
       document.getElementById('stop-btn').disabled = true;
     }
 
-    // Monitor toggle
     document.getElementById('monitor-toggle').checked = s.monitor.enabled;
     const monSub = document.getElementById('monitor-sub');
-    if (s.monitor.enabled) {
-      monSub.textContent = `Vérifie toutes les 5 min · Vu: ${s.monitor.lastCheck ? timeAgo(s.monitor.lastCheck) : '—'}`;
-    } else {
-      monSub.textContent = 'Activez pour uploader automatiquement les nouvelles releases';
-    }
+    monSub.textContent = s.monitor.enabled
+      ? `Checks every 5 min — last checked ${timeAgo(s.monitor.lastCheck)}`
+      : 'Enable to automatically upload new releases';
 
-    // Pills
-    const lcPill = document.getElementById('last-check-pill');
-    const luPill = document.getElementById('last-upload-pill');
-    if (s.monitor.lastCheck) {
-      lcPill.textContent = `Vérifié ${timeAgo(s.monitor.lastCheck)}`;
-      lcPill.style.display = '';
-    }
-    if (s.monitor.lastUploadedTag) {
-      luPill.textContent = `Uploadé: ${s.monitor.lastUploadedTag}`;
-      luPill.style.display = '';
-      luPill.className = 'pill pill-green';
-    }
+    const pillsEl = document.getElementById('monitor-pills');
+    const pills = [];
+    if (s.monitor.lastCheck)
+      pills.push(`<span class="pill pill-gray">Checked ${timeAgo(s.monitor.lastCheck)}</span>`);
+    if (s.monitor.lastUploadedTag)
+      pills.push(`<span class="pill pill-green">✓ ${s.monitor.lastUploadedTag}</span>`);
+    pillsEl.innerHTML = pills.join('');
 
     const errEl = document.getElementById('monitor-error');
     if (s.monitor.lastError) {
@@ -381,12 +614,10 @@ async function poll() {
       errEl.style.display = 'none';
     }
 
-    // Cookie status
     const cs = document.getElementById('cookie-status');
-    cs.textContent = s.cookiesExist ? '✓ Session active' : '✗ Aucune session — connectez-vous';
+    cs.textContent = s.cookiesExist ? '✓ Session active' : '✗ No session — paste cookies above';
     cs.style.color = s.cookiesExist ? 'var(--green)' : 'var(--red)';
 
-    // Pre-fill config if set
     if (s.monitor.repoUrl && !document.getElementById('repo-url').dataset.filled) {
       document.getElementById('repo-url').value = s.monitor.repoUrl;
       document.getElementById('repo-url').dataset.filled = '1';
@@ -396,32 +627,32 @@ async function poll() {
 poll();
 setInterval(poll, 4000);
 
-// ── Release info ──────────────────────────────────────────────────────────
+// ── Release ────────────────────────────────────────────────────────────────
 async function refreshRelease() {
   document.getElementById('release-loading').style.display = '';
   document.getElementById('release-info').style.display = 'none';
   document.getElementById('release-error').style.display = 'none';
   try {
-    const r = await (await fetch(`${API}/api/appetize/release`)).json();
+    const [r, s] = await Promise.all([
+      fetch('/api/appetize/release').then(r => r.json()),
+      fetch('/api/appetize/status').then(r => r.json()),
+    ]);
     if (r.error) throw new Error(r.error);
 
     document.getElementById('release-tag').textContent = r.tag;
-    const pub = r.publishedAt ? new Date(r.publishedAt).toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'}) : '';
-    document.getElementById('release-meta').textContent = pub + (r.name && r.name !== r.tag ? ` — ${r.name}` : '');
-    document.getElementById('release-apk').textContent = r.apkName ? `📦 ${r.apkName} (${r.apkSizeMb} MB)` : '⚠ Aucun APK dans cette release';
+    const pub = r.publishedAt
+      ? new Date(r.publishedAt).toLocaleDateString('en-US', { day:'numeric', month:'short', year:'numeric' })
+      : '';
+    document.getElementById('release-date').textContent = pub + (r.name && r.name !== r.tag ? ` — ${r.name}` : '');
+    document.getElementById('release-apk').textContent = r.apkName ? `📦 ${r.apkName}  (${r.apkSizeMb} MB)` : '⚠ No APK in this release';
 
-    // Compare with last uploaded
-    const status = await (await fetch(`${API}/api/appetize/status`)).json();
-    const pill = document.getElementById('release-status-pill');
-    if (status.monitor.lastUploadedTag === r.tag) {
-      pill.textContent = '✓ Uploadé';
-      pill.className = 'pill pill-green';
-    } else if (status.monitor.lastUploadedTag) {
-      pill.textContent = '🆕 Nouvelle';
-      pill.className = 'pill pill-blue';
+    const pill = document.getElementById('release-pill');
+    if (s.monitor.lastUploadedTag === r.tag) {
+      pill.textContent = '✓ Uploaded'; pill.className = 'pill pill-green';
+    } else if (s.monitor.lastUploadedTag) {
+      pill.textContent = '🆕 New'; pill.className = 'pill pill-blue';
     } else {
-      pill.textContent = 'Non uploadé';
-      pill.className = 'pill pill-gray';
+      pill.textContent = 'Not uploaded'; pill.className = 'pill pill-gray';
     }
 
     document.getElementById('release-loading').style.display = 'none';
@@ -429,73 +660,65 @@ async function refreshRelease() {
   } catch (e) {
     document.getElementById('release-loading').style.display = 'none';
     const errEl = document.getElementById('release-error');
-    errEl.textContent = '⚠ ' + e.message + (e.message.includes('401') ? ' — vérifie le PAT' : e.message.includes('non configurée') ? ' — configure le repo ci-dessous' : '');
+    errEl.textContent = '⚠ ' + e.message;
     errEl.style.display = '';
   }
 }
 refreshRelease();
 
-// ── Monitor ───────────────────────────────────────────────────────────────
+// ── Actions ────────────────────────────────────────────────────────────────
 async function toggleMonitor(enabled) {
   const url = enabled ? '/api/appetize/monitor/start' : '/api/appetize/monitor/stop';
   try {
-    const r = await fetch(`${API}${url}`, { method: 'POST' });
+    const r = await fetch(url, { method: 'POST' });
     const d = await r.json();
-    if (!r.ok) { toast(d.error || 'Erreur', false); document.getElementById('monitor-toggle').checked = !enabled; }
-    else toast(enabled ? '✓ Monitor activé' : 'Monitor désactivé', enabled);
-  } catch { toast('Erreur réseau', false); document.getElementById('monitor-toggle').checked = !enabled; }
+    if (!r.ok) { toast(d.error || 'Error', false); document.getElementById('monitor-toggle').checked = !enabled; }
+    else toast(enabled ? '✓ Monitor started' : 'Monitor stopped', enabled);
+  } catch { toast('Network error', false); document.getElementById('monitor-toggle').checked = !enabled; }
 }
 
-// ── Config ────────────────────────────────────────────────────────────────
 async function saveConfig() {
   const repoUrl = document.getElementById('repo-url').value.trim();
   const pat = document.getElementById('github-pat').value.trim();
-  if (!repoUrl) { toast('URL du repo requise', false); return; }
-  try {
-    const r = await fetch(`${API}/api/appetize/config`, {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ repoUrl, pat }),
-    });
-    const d = await r.json();
-    r.ok ? toast('✓ Config sauvegardée') : toast(d.error || 'Erreur', false);
-    if (r.ok) { document.getElementById('github-pat').value = ''; refreshRelease(); }
-  } catch { toast('Erreur réseau', false); }
+  if (!repoUrl) { toast('Repo URL required', false); return; }
+  const r = await fetch('/api/appetize/config', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ repoUrl, pat }),
+  });
+  const d = await r.json();
+  r.ok ? toast('✓ Config saved') : toast(d.error || 'Error', false);
+  if (r.ok) { document.getElementById('github-pat').value = ''; refreshRelease(); }
 }
 
-// ── Upload ────────────────────────────────────────────────────────────────
 async function uploadNow() {
-  try {
-    const r = await fetch(`${API}/api/appetize/upload-now`, { method: 'POST' });
-    const d = await r.json();
-    r.ok ? toast('✓ Upload démarré') : toast(d.error || 'Erreur', false);
-  } catch { toast('Erreur réseau', false); }
+  const r = await fetch('/api/appetize/upload-now', { method: 'POST' });
+  const d = await r.json();
+  r.ok ? toast('✓ Upload started') : toast(d.error || 'Error', false);
 }
 
 async function stopUpload() {
-  try {
-    await fetch(`${API}/api/appetize/stop`, { method: 'POST' });
-    toast('Arrêt envoyé');
-  } catch { toast('Erreur', false); }
+  await fetch('/api/appetize/stop', { method: 'POST' });
+  toast('Stop signal sent');
 }
 
-// ── Cookies ───────────────────────────────────────────────────────────────
 async function saveCookies() {
   const raw = document.getElementById('cookies-input').value.trim();
-  if (!raw) { toast('Colle tes cookies JSON d\'abord', false); return; }
-  try { JSON.parse(raw); } catch { toast('JSON invalide', false); return; }
-  const r = await fetch(`${API}/api/appetize/cookies`, {
-    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ cookies: raw }),
+  if (!raw) { toast('Paste cookies JSON first', false); return; }
+  try { JSON.parse(raw); } catch { toast('Invalid JSON', false); return; }
+  const r = await fetch('/api/appetize/cookies', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ cookies: raw }),
   });
   const d = await r.json();
-  r.ok ? toast('✓ Cookies sauvegardés') : toast(d.error || 'Erreur', false);
+  r.ok ? toast('✓ Cookies saved') : toast(d.error || 'Error', false);
   if (r.ok) document.getElementById('cookies-input').value = '';
   poll();
 }
 
 async function deleteCookies() {
-  const r = await fetch(`${API}/api/appetize/cookies`, { method: 'DELETE' });
+  const r = await fetch('/api/appetize/cookies', { method: 'DELETE' });
   const d = await r.json();
-  r.ok ? toast('Session supprimée', true) : toast(d.error || 'Erreur', false);
+  r.ok ? toast('Session deleted') : toast(d.error || 'Error', false);
   poll();
 }
 </script>
