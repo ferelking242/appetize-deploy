@@ -428,7 +428,7 @@ function requireApiKey(
   res.status(401).json({
     error: "Unauthorized",
     hint: "Pass your API key via: Authorization: Bearer <key>  OR  X-Api-Key: <key>",
-    docs: "https://ferelking242.github.io/Appetize",
+    docs: "https://ferelking242.github.io/appetize-deploy",
   });
 }
 
@@ -437,7 +437,7 @@ v1Router.get("/", (_req, res) => {
   res.json({
     name: "Watchtower Appetize Uploader",
     version: "1.0.0",
-    docs: "https://ferelking242.github.io/Appetize",
+    docs: "https://ferelking242.github.io/appetize-deploy",
     dashboard: "/api/dashboard/",
     endpoints: {
       "GET  /api/v1/status":           "System status (public)",
